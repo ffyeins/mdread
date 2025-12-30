@@ -2,6 +2,13 @@
 
 # Convert markdown files to HTML using GitHub styling
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Paths to template and CSS files
+TEMPLATE="$SCRIPT_DIR/template.html"
+CSS="$SCRIPT_DIR/github-markdown-light.css"
+
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <markdown-file> [<markdown-file> ...]"
     echo "Example: $0 file1.md file2.md file3.md"
@@ -24,10 +31,10 @@ for md_file in "$@"; do
     echo "Converting $md_file → $html_file"
 
     pandoc "$md_file" -o "$html_file" \
-        --template=./template.html \
+        --template="$TEMPLATE" \
         --embed-resources \
         --standalone \
-        --css=github-markdown-light.css \
+        --css="$CSS" \
         --metadata title="$title"
 
     if [ $? -eq 0 ]; then
