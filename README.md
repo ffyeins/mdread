@@ -17,27 +17,53 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
   brew install pandoc
   ```
 
-## Setup
+## Installation
 
-1. **Clone the repository**:
+1. **Ensure files are in your dotfiles directory**:
    ```bash
-   git clone <repository-url>
-   cd md2html
+   ~/dotfiles/scripts/md2html/
+   ├── md2html.sh
+   ├── template.html
+   └── github-markdown-light.css
    ```
 
+<<<<<<< Updated upstream
 2. **Create an alias** (optional but recommended):
-
-   Add to your shell config file (`~/.zshrc` for zsh or `~/.bashrc` for bash):
+||||||| Stash base
+2. **Download GitHub CSS** (if not included):
    ```bash
+   curl -O https://raw.githubusercontent.com/sindresorhus/github-markdown-css/main/github-markdown-light.css
+   ```
+
+3. **Create an alias** (optional but recommended):
+=======
+2. **Make the script executable**:
+   ```bash
+   chmod +x ~/dotfiles/scripts/md2html/md2html.sh
+   ```
+
+3. **Create an alias** (recommended):
+>>>>>>> Stashed changes
+
+   Add to your `~/.zshrc`:
+   ```bash
+<<<<<<< Updated upstream
    alias md2html='~/dotfiles/scripts/md2html.sh'
+||||||| Stash base
+   alias md2html='/Users/fran/dev/github-style-markdown-pdf-generator/md2html.sh'
+=======
+   alias md2html='~/dotfiles/scripts/md2html/md2html.sh'
+>>>>>>> Stashed changes
    ```
 
    Then reload your shell config:
    ```bash
-   source ~/.zshrc  # or source ~/.bashrc
+   source ~/.zshrc
    ```
 
 ## Usage
+
+The script can be called from any directory - it automatically locates its template and CSS files.
 
 ### With alias:
 ```bash
@@ -48,8 +74,8 @@ md2html *.md
 
 ### Without alias:
 ```bash
-./md2html.sh document.md
-./md2html.sh *.md
+~/dotfiles/scripts/md2html/md2html.sh document.md
+~/dotfiles/scripts/md2html/md2html.sh *.md
 ```
 
 ## Files

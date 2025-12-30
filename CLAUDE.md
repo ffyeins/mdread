@@ -6,22 +6,26 @@ This project converts Markdown files to self-contained HTML with GitHub's exact 
 ## What We Built
 
 ### Markdown to HTML Pipeline
-Created a command-line workflow to generate self-contained HTML files with GitHub styling:
+Created a command-line script to generate self-contained HTML files with GitHub styling. The script automatically finds its resources and can be called from anywhere.
+
+**Installation Location**: `~/dotfiles/scripts/md2html/`
 
 **Files Required**:
-1. `github-markdown-light.css` - GitHub's official light theme CSS
-2. `template.html` - HTML wrapper with proper layout
-3. Your markdown file (e.g., `input.md`)
+1. `md2html.sh` - Conversion script
+2. `github-markdown-light.css` - GitHub's official light theme CSS
+3. `template.html` - HTML wrapper with proper layout
 
-**Command**:
+**Usage**:
 ```bash
-pandoc input.md -o output.html \
-  --template=./template.html \
-  --embed-resources \
-  --standalone \
-  --css=github-markdown-light.css \
-  --metadata title="Your Document Title"
+# Via alias (recommended)
+md2html document.md
+md2html file1.md file2.md *.md
+
+# Direct call
+~/dotfiles/scripts/md2html/md2html.sh document.md
 ```
+
+The script uses `SCRIPT_DIR` to locate template and CSS files, allowing it to be called from any directory.
 
 ## File Contents
 
@@ -91,24 +95,27 @@ pandoc input.md -o output.html \
 
 ## Directory Structure
 ```
-project/
-├── github-markdown-light.css   # GitHub light theme CSS
-├── template.html           # HTML template with layout
-├── input.md                     # Your markdown file
-└── output.html                  # Generated HTML file
+~/dotfiles/scripts/md2html/
+├── md2html.sh                   # Conversion script
+├── github-markdown-light.css    # GitHub light theme CSS
+├── template.html                # HTML template with layout
+└── README.md                    # Documentation
 ```
+
+The script can be called from any directory - it will locate the template and CSS files relative to its own location.
 
 ## Installation Paths (macOS)
 
-- Pandoc: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
-- CSS file: Downloaded from npm or GitHub to project directory
+- **Script location**: `~/dotfiles/scripts/md2html/`
+- **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
+- **Alias**: Add to `~/.zshrc`: `alias md2html='~/dotfiles/scripts/md2html/md2html.sh'`
 
 ## User Preferences
 
 - macOS user (MacBook Air)
 - Prefers command-line tools
 - Senior developer, values concise technical explanations
-- Working directory: `~/dev/github-style-markdown-pdf-generator/`
+- Uses dotfiles structure for scripts
 
 ## Resources
 
