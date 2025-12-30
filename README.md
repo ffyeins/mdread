@@ -25,16 +25,11 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
    cd md2html
    ```
 
-2. **Download GitHub CSS** (if not included):
-   ```bash
-   curl -O https://raw.githubusercontent.com/sindresorhus/github-markdown-css/main/github-markdown-light.css
-   ```
-
-3. **Create an alias** (optional but recommended):
+2. **Create an alias** (optional but recommended):
 
    Add to your shell config file (`~/.zshrc` for zsh or `~/.bashrc` for bash):
    ```bash
-   alias md2html='/Users/fran/dev/github-style-markdown-pdf-generator/md2html.sh'
+   alias md2html='~/dotfiles/scripts/md2html.sh'
    ```
 
    Then reload your shell config:
