@@ -5,6 +5,7 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 ## Features
 
 - GitHub's exact light theme CSS
+- Syntax highlighting for code blocks
 - Self-contained HTML files (all resources embedded)
 - Preserves filenames (`input.md` → `input.html`)
 - Batch processing support
@@ -72,6 +73,7 @@ md2html *.md
 Generated HTML files are:
 - Self-contained (single file, no dependencies)
 - Fully styled with GitHub's light theme
+- Code blocks with syntax highlighting
 - Responsive and mobile-friendly
 - Searchable and interactive
 

@@ -35,7 +35,8 @@ for md_file in "$@"; do
         --embed-resources \
         --standalone \
         --css="$CSS" \
-        --metadata title="$title"
+        --metadata title="$title" \
+        --syntax-highlighting=default
 
     if [ $? -eq 0 ]; then
         echo "✓ Successfully created $html_file"
