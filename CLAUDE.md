@@ -54,6 +54,11 @@ The script uses `SCRIPT_DIR` to locate template and CSS files, allowing it to be
       }
     }
   </style>
+$if(highlighting-css)$
+  <style>
+$highlighting-css$
+  </style>
+$endif$
   $for(css)$
   <link rel="stylesheet" href="$css$">
   $endfor$
@@ -67,6 +72,9 @@ The script uses `SCRIPT_DIR` to locate template and CSS files, allowing it to be
 </body>
 </html>
 ```
+
+### md2html.sh
+The script uses `--syntax-highlighting=default` to enable Pandoc's built-in syntax highlighting. The `$highlighting-css$` variable in the template allows Pandoc to inject the necessary CSS for syntax highlighting.
 
 ## Key Design Decisions
 
@@ -86,6 +94,11 @@ The script uses `SCRIPT_DIR` to locate template and CSS files, allowing it to be
 3. **Layout**: GitHub's 980px max-width centered layout with responsive padding
 
 4. **CSS Source**: Using official `github-markdown-light.css` from sindresorhus/github-markdown-css
+
+5. **Syntax Highlighting**: Using Pandoc's built-in highlighting with `--syntax-highlighting=default`:
+   - Supports all major programming languages
+   - CSS automatically embedded via `$highlighting-css$` template variable
+   - Alternative styles available: pygments, tango, kate, monochrome, breezedark, espresso, zenburn, haddock
 
 ## Dependencies
 
