@@ -22,7 +22,7 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd github-style-markdown-pdf-generator
+   cd md2html
    ```
 
 2. **Download GitHub CSS** (if not included):
