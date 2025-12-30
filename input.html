@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>input</title>
+  <style>
+body {
+margin: 0;
+padding: 0;
+background-color: #ffffff;
+}
+.container {
+max-width: 980px;
+margin: 0 auto;
+padding: 45px;
+}
+@media (max-width: 767px) {
+.container {
+padding: 15px;
+}
+}
+</style>
+    <link href="data:text/css,%0A%2Emarkdown%2Dbody%20%7B%0Acolor%2Dscheme%3A%20light%3B%0A%2Dms%2Dtext%2Dsize%2Dadjust%3A%20100%25%3B%0A%2Dwebkit%2Dtext%2Dsize%2Dadjust%3A%20100%25%3B%0Amargin%3A%200%3B%0Acolor%3A%20%231f2328%3B%0Abackground%2Dcolor%3A%20%23ffffff%3B%0Afont%2Dfamily%3A%20%2Dapple%2Dsystem%2CBlinkMacSystemFont%2C%22Segoe%20UI%22%2C%22Noto%20Sans%22%2CHelvetica%2CArial%2Csans%2Dserif%2C%22Apple%20Color%20Emoji%22%2C%22Segoe%20UI%20Emoji%22%3B%0Afont%2Dsize%3A%2016px%3B%0Aline%2Dheight%3A%201%2E5%3B%0Aword%2Dwrap%3A%20break%2Dword%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eocticon%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0Afill%3A%20currentColor%3B%0Avertical%2Dalign%3A%20text%2Dbottom%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%2C%0A%2Emarkdown%2Dbody%20h2%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%2C%0A%2Emarkdown%2Dbody%20h3%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%2C%0A%2Emarkdown%2Dbody%20h4%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%2C%0A%2Emarkdown%2Dbody%20h5%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%2C%0A%2Emarkdown%2Dbody%20h6%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%3Abefore%20%7B%0Awidth%3A%2016px%3B%0Aheight%3A%2016px%3B%0Acontent%3A%20%27%20%27%3B%0Adisplay%3A%20inline%2Dblock%3B%0Abackground%2Dcolor%3A%20currentColor%3B%0A%2Dwebkit%2Dmask%2Dimage%3A%20url%28%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww%2Ew3%2Eorg%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%20version%3D%271%2E1%27%20aria%2Dhidden%3D%27true%27%3E%3Cpath%20fill%2Drule%3D%27evenodd%27%20d%3D%27M7%2E775%203%2E275a%2E75%2E75%200%20001%2E06%201%2E06l1%2E25%2D1%2E25a2%202%200%20112%2E83%202%2E83l%2D2%2E5%202%2E5a2%202%200%2001%2D2%2E83%200%20%2E75%2E75%200%2000%2D1%2E06%201%2E06%203%2E5%203%2E5%200%20004%2E95%200l2%2E5%2D2%2E5a3%2E5%203%2E5%200%2000%2D4%2E95%2D4%2E95l%2D1%2E25%201%2E25zm%2D4%2E69%209%2E64a2%202%200%20010%2D2%2E83l2%2E5%2D2%2E5a2%202%200%20012%2E83%200%20%2E75%2E75%200%20001%2E06%2D1%2E06%203%2E5%203%2E5%200%2000%2D4%2E95%200l%2D2%2E5%202%2E5a3%2E5%203%2E5%200%20004%2E95%204%2E95l1%2E25%2D1%2E25a%2E75%2E75%200%2000%2D1%2E06%2D1%2E06l%2D1%2E25%201%2E25a2%202%200%2001%2D2%2E83%200z%27%3E%3C%2Fpath%3E%3C%2Fsvg%3E%22%29%3B%0Amask%2Dimage%3A%20url%28%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww%2Ew3%2Eorg%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%20version%3D%271%2E1%27%20aria%2Dhidden%3D%27true%27%3E%3Cpath%20fill%2Drule%3D%27evenodd%27%20d%3D%27M7%2E775%203%2E275a%2E75%2E75%200%20001%2E06%201%2E06l1%2E25%2D1%2E25a2%202%200%20112%2E83%202%2E83l%2D2%2E5%202%2E5a2%202%200%2001%2D2%2E83%200%20%2E75%2E75%200%2000%2D1%2E06%201%2E06%203%2E5%203%2E5%200%20004%2E95%200l2%2E5%2D2%2E5a3%2E5%203%2E5%200%2000%2D4%2E95%2D4%2E95l%2D1%2E25%201%2E25zm%2D4%2E69%209%2E64a2%202%200%20010%2D2%2E83l2%2E5%2D2%2E5a2%202%200%20012%2E83%200%20%2E75%2E75%200%20001%2E06%2D1%2E06%203%2E5%203%2E5%200%2000%2D4%2E95%200l%2D2%2E5%202%2E5a3%2E5%203%2E5%200%20004%2E95%204%2E95l1%2E25%2D1%2E25a%2E75%2E75%200%2000%2D1%2E06%2D1%2E06l%2D1%2E25%201%2E25a2%202%200%2001%2D2%2E83%200z%27%3E%3C%2Fpath%3E%3C%2Fsvg%3E%22%29%3B%0A%7D%0A%2Emarkdown%2Dbody%20details%2C%0A%2Emarkdown%2Dbody%20figcaption%2C%0A%2Emarkdown%2Dbody%20figure%20%7B%0Adisplay%3A%20block%3B%0A%7D%0A%2Emarkdown%2Dbody%20summary%20%7B%0Adisplay%3A%20list%2Ditem%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Bhidden%5D%20%7B%0Adisplay%3A%20none%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%20%7B%0Abackground%2Dcolor%3A%20transparent%3B%0Acolor%3A%20%230969da%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20abbr%5Btitle%5D%20%7B%0Aborder%2Dbottom%3A%20none%3B%0A%2Dwebkit%2Dtext%2Ddecoration%3A%20underline%20dotted%3B%0Atext%2Ddecoration%3A%20underline%20dotted%3B%0A%7D%0A%2Emarkdown%2Dbody%20b%2C%0A%2Emarkdown%2Dbody%20strong%20%7B%0Afont%2Dweight%3A%20600%3B%0A%7D%0A%2Emarkdown%2Dbody%20dfn%20%7B%0Afont%2Dstyle%3A%20italic%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%20%7B%0Amargin%3A%20%2E67em%200%3B%0Afont%2Dweight%3A%20600%3B%0Apadding%2Dbottom%3A%20%2E3em%3B%0Afont%2Dsize%3A%202em%3B%0Aborder%2Dbottom%3A%201px%20solid%20%23d1d9e0b3%3B%0A%7D%0A%2Emarkdown%2Dbody%20mark%20%7B%0Abackground%2Dcolor%3A%20%23fff8c5%3B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20small%20%7B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0A%2Emarkdown%2Dbody%20sub%2C%0A%2Emarkdown%2Dbody%20sup%20%7B%0Afont%2Dsize%3A%2075%25%3B%0Aline%2Dheight%3A%200%3B%0Aposition%3A%20relative%3B%0Avertical%2Dalign%3A%20baseline%3B%0A%7D%0A%2Emarkdown%2Dbody%20sub%20%7B%0Abottom%3A%20%2D0%2E25em%3B%0A%7D%0A%2Emarkdown%2Dbody%20sup%20%7B%0Atop%3A%20%2D0%2E5em%3B%0A%7D%0A%2Emarkdown%2Dbody%20img%20%7B%0Aborder%2Dstyle%3A%20none%3B%0Amax%2Dwidth%3A%20100%25%3B%0Abox%2Dsizing%3A%20content%2Dbox%3B%0A%7D%0A%2Emarkdown%2Dbody%20code%2C%0A%2Emarkdown%2Dbody%20kbd%2C%0A%2Emarkdown%2Dbody%20pre%2C%0A%2Emarkdown%2Dbody%20samp%20%7B%0Afont%2Dfamily%3A%20monospace%3B%0Afont%2Dsize%3A%201em%3B%0A%7D%0A%2Emarkdown%2Dbody%20figure%20%7B%0Amargin%3A%201em%202%2E5rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20hr%20%7B%0Abox%2Dsizing%3A%20content%2Dbox%3B%0Aoverflow%3A%20hidden%3B%0Abackground%3A%20transparent%3B%0Aborder%2Dbottom%3A%201px%20solid%20%23d1d9e0b3%3B%0Aheight%3A%20%2E25em%3B%0Apadding%3A%200%3B%0Amargin%3A%201%2E5rem%200%3B%0Abackground%2Dcolor%3A%20%23d1d9e0%3B%0Aborder%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20input%20%7B%0Afont%3A%20inherit%3B%0Amargin%3A%200%3B%0Aoverflow%3A%20visible%3B%0Afont%2Dfamily%3A%20inherit%3B%0Afont%2Dsize%3A%20inherit%3B%0Aline%2Dheight%3A%20inherit%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Btype%3Dbutton%5D%2C%0A%2Emarkdown%2Dbody%20%5Btype%3Dreset%5D%2C%0A%2Emarkdown%2Dbody%20%5Btype%3Dsubmit%5D%20%7B%0A%2Dwebkit%2Dappearance%3A%20button%3B%0Aappearance%3A%20button%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Btype%3Dcheckbox%5D%2C%0A%2Emarkdown%2Dbody%20%5Btype%3Dradio%5D%20%7B%0Abox%2Dsizing%3A%20border%2Dbox%3B%0Apadding%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Btype%3Dnumber%5D%3A%3A%2Dwebkit%2Dinner%2Dspin%2Dbutton%2C%0A%2Emarkdown%2Dbody%20%5Btype%3Dnumber%5D%3A%3A%2Dwebkit%2Douter%2Dspin%2Dbutton%20%7B%0Aheight%3A%20auto%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Btype%3Dsearch%5D%3A%3A%2Dwebkit%2Dsearch%2Dcancel%2Dbutton%2C%0A%2Emarkdown%2Dbody%20%5Btype%3Dsearch%5D%3A%3A%2Dwebkit%2Dsearch%2Ddecoration%20%7B%0A%2Dwebkit%2Dappearance%3A%20none%3B%0Aappearance%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%3A%3A%2Dwebkit%2Dinput%2Dplaceholder%20%7B%0Acolor%3A%20inherit%3B%0Aopacity%3A%20%2E54%3B%0A%7D%0A%2Emarkdown%2Dbody%20%3A%3A%2Dwebkit%2Dfile%2Dupload%2Dbutton%20%7B%0A%2Dwebkit%2Dappearance%3A%20button%3B%0Aappearance%3A%20button%3B%0Afont%3A%20inherit%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Ahover%20%7B%0Atext%2Ddecoration%3A%20underline%3B%0A%7D%0A%2Emarkdown%2Dbody%20%3A%3Aplaceholder%20%7B%0Acolor%3A%20%2359636e%3B%0Aopacity%3A%201%3B%0A%7D%0A%2Emarkdown%2Dbody%20hr%3A%3Abefore%20%7B%0Adisplay%3A%20table%3B%0Acontent%3A%20%22%22%3B%0A%7D%0A%2Emarkdown%2Dbody%20hr%3A%3Aafter%20%7B%0Adisplay%3A%20table%3B%0Aclear%3A%20both%3B%0Acontent%3A%20%22%22%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20%7B%0Aborder%2Dspacing%3A%200%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Adisplay%3A%20block%3B%0Awidth%3A%20max%2Dcontent%3B%0Amax%2Dwidth%3A%20100%25%3B%0Aoverflow%3A%20auto%3B%0Afont%2Dvariant%3A%20tabular%2Dnums%3B%0A%7D%0A%2Emarkdown%2Dbody%20td%2C%0A%2Emarkdown%2Dbody%20th%20%7B%0Apadding%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20details%20summary%20%7B%0Acursor%3A%20pointer%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Afocus%2C%0A%2Emarkdown%2Dbody%20%5Brole%3Dbutton%5D%3Afocus%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dradio%5D%3Afocus%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dcheckbox%5D%3Afocus%20%7B%0Aoutline%3A%202px%20solid%20%230969da%3B%0Aoutline%2Doffset%3A%20%2D2px%3B%0Abox%2Dshadow%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20%5Brole%3Dbutton%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dradio%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dcheckbox%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%20%7B%0Aoutline%3A%20solid%201px%20transparent%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Afocus%2Dvisible%2C%0A%2Emarkdown%2Dbody%20%5Brole%3Dbutton%5D%3Afocus%2Dvisible%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dradio%5D%3Afocus%2Dvisible%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dcheckbox%5D%3Afocus%2Dvisible%20%7B%0Aoutline%3A%202px%20solid%20%230969da%3B%0Aoutline%2Doffset%3A%20%2D2px%3B%0Abox%2Dshadow%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Anot%28%5Bclass%5D%29%3Afocus%2C%0A%2Emarkdown%2Dbody%20a%3Anot%28%5Bclass%5D%29%3Afocus%2Dvisible%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dradio%5D%3Afocus%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dradio%5D%3Afocus%2Dvisible%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dcheckbox%5D%3Afocus%2C%0A%2Emarkdown%2Dbody%20input%5Btype%3Dcheckbox%5D%3Afocus%2Dvisible%20%7B%0Aoutline%2Doffset%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20kbd%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0Apadding%3A%200%2E25rem%3B%0Afont%3A%2011px%20ui%2Dmonospace%2C%20SFMono%2DRegular%2C%20SF%20Mono%2C%20Menlo%2C%20Consolas%2C%20Liberation%20Mono%2C%20monospace%3B%0Aline%2Dheight%3A%2010px%3B%0Acolor%3A%20%231f2328%3B%0Avertical%2Dalign%3A%20middle%3B%0Abackground%2Dcolor%3A%20%23f6f8fa%3B%0Aborder%3A%20solid%201px%20%23d1d9e0b3%3B%0Aborder%2Dbottom%2Dcolor%3A%20%23d1d9e0b3%3B%0Aborder%2Dradius%3A%206px%3B%0Abox%2Dshadow%3A%20inset%200%20%2D1px%200%20%23d1d9e0b3%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%2C%0A%2Emarkdown%2Dbody%20h2%2C%0A%2Emarkdown%2Dbody%20h3%2C%0A%2Emarkdown%2Dbody%20h4%2C%0A%2Emarkdown%2Dbody%20h5%2C%0A%2Emarkdown%2Dbody%20h6%20%7B%0Amargin%2Dtop%3A%201%2E5rem%3B%0Amargin%2Dbottom%3A%201rem%3B%0Afont%2Dweight%3A%20600%3B%0Aline%2Dheight%3A%201%2E25%3B%0A%7D%0A%2Emarkdown%2Dbody%20h2%20%7B%0Afont%2Dweight%3A%20600%3B%0Apadding%2Dbottom%3A%20%2E3em%3B%0Afont%2Dsize%3A%201%2E5em%3B%0Aborder%2Dbottom%3A%201px%20solid%20%23d1d9e0b3%3B%0A%7D%0A%2Emarkdown%2Dbody%20h3%20%7B%0Afont%2Dweight%3A%20600%3B%0Afont%2Dsize%3A%201%2E25em%3B%0A%7D%0A%2Emarkdown%2Dbody%20h4%20%7B%0Afont%2Dweight%3A%20600%3B%0Afont%2Dsize%3A%201em%3B%0A%7D%0A%2Emarkdown%2Dbody%20h5%20%7B%0Afont%2Dweight%3A%20600%3B%0Afont%2Dsize%3A%20%2E875em%3B%0A%7D%0A%2Emarkdown%2Dbody%20h6%20%7B%0Afont%2Dweight%3A%20600%3B%0Afont%2Dsize%3A%20%2E85em%3B%0Acolor%3A%20%2359636e%3B%0A%7D%0A%2Emarkdown%2Dbody%20p%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Emarkdown%2Dbody%20blockquote%20%7B%0Amargin%3A%200%3B%0Apadding%3A%200%201em%3B%0Acolor%3A%20%2359636e%3B%0Aborder%2Dleft%3A%20%2E25em%20solid%20%23d1d9e0%3B%0A%7D%0A%2Emarkdown%2Dbody%20ul%2C%0A%2Emarkdown%2Dbody%20ol%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%200%3B%0Apadding%2Dleft%3A%202em%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%20ol%2C%0A%2Emarkdown%2Dbody%20ul%20ol%20%7B%0Alist%2Dstyle%2Dtype%3A%20lower%2Droman%3B%0A%7D%0A%2Emarkdown%2Dbody%20ul%20ul%20ol%2C%0A%2Emarkdown%2Dbody%20ul%20ol%20ol%2C%0A%2Emarkdown%2Dbody%20ol%20ul%20ol%2C%0A%2Emarkdown%2Dbody%20ol%20ol%20ol%20%7B%0Alist%2Dstyle%2Dtype%3A%20lower%2Dalpha%3B%0A%7D%0A%2Emarkdown%2Dbody%20dd%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20tt%2C%0A%2Emarkdown%2Dbody%20code%2C%0A%2Emarkdown%2Dbody%20samp%20%7B%0Afont%2Dfamily%3A%20ui%2Dmonospace%2C%20SFMono%2DRegular%2C%20SF%20Mono%2C%20Menlo%2C%20Consolas%2C%20Liberation%20Mono%2C%20monospace%3B%0Afont%2Dsize%3A%2012px%3B%0A%7D%0A%2Emarkdown%2Dbody%20pre%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%200%3B%0Afont%2Dfamily%3A%20ui%2Dmonospace%2C%20SFMono%2DRegular%2C%20SF%20Mono%2C%20Menlo%2C%20Consolas%2C%20Liberation%20Mono%2C%20monospace%3B%0Afont%2Dsize%3A%2012px%3B%0Aword%2Dwrap%3A%20normal%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eocticon%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0Aoverflow%3A%20visible%20%21important%3B%0Avertical%2Dalign%3A%20text%2Dbottom%3B%0Afill%3A%20currentColor%3B%0A%7D%0A%2Emarkdown%2Dbody%20input%3A%3A%2Dwebkit%2Douter%2Dspin%2Dbutton%2C%0A%2Emarkdown%2Dbody%20input%3A%3A%2Dwebkit%2Dinner%2Dspin%2Dbutton%20%7B%0Amargin%3A%200%3B%0Aappearance%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emr%2D2%20%7B%0Amargin%2Dright%3A%200%2E5rem%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%3A%3Abefore%20%7B%0Adisplay%3A%20table%3B%0Acontent%3A%20%22%22%3B%0A%7D%0A%2Emarkdown%2Dbody%3A%3Aafter%20%7B%0Adisplay%3A%20table%3B%0Aclear%3A%20both%3B%0Acontent%3A%20%22%22%3B%0A%7D%0A%2Emarkdown%2Dbody%3E%2A%3Afirst%2Dchild%20%7B%0Amargin%2Dtop%3A%200%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%3E%2A%3Alast%2Dchild%20%7B%0Amargin%2Dbottom%3A%200%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%20a%3Anot%28%5Bhref%5D%29%20%7B%0Acolor%3A%20inherit%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eabsent%20%7B%0Acolor%3A%20%23d1242f%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eanchor%20%7B%0Afloat%3A%20left%3B%0Apadding%2Dright%3A%200%2E25rem%3B%0Amargin%2Dleft%3A%20%2D20px%3B%0Aline%2Dheight%3A%201%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eanchor%3Afocus%20%7B%0Aoutline%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20p%2C%0A%2Emarkdown%2Dbody%20blockquote%2C%0A%2Emarkdown%2Dbody%20ul%2C%0A%2Emarkdown%2Dbody%20ol%2C%0A%2Emarkdown%2Dbody%20dl%2C%0A%2Emarkdown%2Dbody%20table%2C%0A%2Emarkdown%2Dbody%20pre%2C%0A%2Emarkdown%2Dbody%20details%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20blockquote%3E%3Afirst%2Dchild%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20blockquote%3E%3Alast%2Dchild%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h2%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h3%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h4%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h5%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h6%20%2Eocticon%2Dlink%20%7B%0Acolor%3A%20%231f2328%3B%0Avertical%2Dalign%3A%20middle%3B%0Avisibility%3A%20hidden%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%3Ahover%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20h2%3Ahover%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20h3%3Ahover%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20h4%3Ahover%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20h5%3Ahover%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20h6%3Ahover%20%2Eanchor%20%7B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h2%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h3%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h4%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h5%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0A%2Emarkdown%2Dbody%20h6%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%20%7B%0Avisibility%3A%20visible%3B%0A%7D%0A%2Emarkdown%2Dbody%20h1%20tt%2C%0A%2Emarkdown%2Dbody%20h1%20code%2C%0A%2Emarkdown%2Dbody%20h2%20tt%2C%0A%2Emarkdown%2Dbody%20h2%20code%2C%0A%2Emarkdown%2Dbody%20h3%20tt%2C%0A%2Emarkdown%2Dbody%20h3%20code%2C%0A%2Emarkdown%2Dbody%20h4%20tt%2C%0A%2Emarkdown%2Dbody%20h4%20code%2C%0A%2Emarkdown%2Dbody%20h5%20tt%2C%0A%2Emarkdown%2Dbody%20h5%20code%2C%0A%2Emarkdown%2Dbody%20h6%20tt%2C%0A%2Emarkdown%2Dbody%20h6%20code%20%7B%0Apadding%3A%200%20%2E2em%3B%0Afont%2Dsize%3A%20inherit%3B%0A%7D%0A%2Emarkdown%2Dbody%20summary%20h1%2C%0A%2Emarkdown%2Dbody%20summary%20h2%2C%0A%2Emarkdown%2Dbody%20summary%20h3%2C%0A%2Emarkdown%2Dbody%20summary%20h4%2C%0A%2Emarkdown%2Dbody%20summary%20h5%2C%0A%2Emarkdown%2Dbody%20summary%20h6%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0A%7D%0A%2Emarkdown%2Dbody%20summary%20h1%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20summary%20h2%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20summary%20h3%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20summary%20h4%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20summary%20h5%20%2Eanchor%2C%0A%2Emarkdown%2Dbody%20summary%20h6%20%2Eanchor%20%7B%0Amargin%2Dleft%3A%20%2D40px%3B%0A%7D%0A%2Emarkdown%2Dbody%20summary%20h1%2C%0A%2Emarkdown%2Dbody%20summary%20h2%20%7B%0Apadding%2Dbottom%3A%200%3B%0Aborder%2Dbottom%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20ul%2Eno%2Dlist%2C%0A%2Emarkdown%2Dbody%20ol%2Eno%2Dlist%20%7B%0Apadding%3A%200%3B%0Alist%2Dstyle%2Dtype%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%5Btype%3D%22a%20s%22%5D%20%7B%0Alist%2Dstyle%2Dtype%3A%20lower%2Dalpha%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%5Btype%3D%22A%20s%22%5D%20%7B%0Alist%2Dstyle%2Dtype%3A%20upper%2Dalpha%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%5Btype%3D%22i%20s%22%5D%20%7B%0Alist%2Dstyle%2Dtype%3A%20lower%2Droman%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%5Btype%3D%22I%20s%22%5D%20%7B%0Alist%2Dstyle%2Dtype%3A%20upper%2Droman%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%5Btype%3D%221%22%5D%20%7B%0Alist%2Dstyle%2Dtype%3A%20decimal%3B%0A%7D%0A%2Emarkdown%2Dbody%20div%3Eol%3Anot%28%5Btype%5D%29%20%7B%0Alist%2Dstyle%2Dtype%3A%20decimal%3B%0A%7D%0A%2Emarkdown%2Dbody%20ul%20ul%2C%0A%2Emarkdown%2Dbody%20ul%20ol%2C%0A%2Emarkdown%2Dbody%20ol%20ol%2C%0A%2Emarkdown%2Dbody%20ol%20ul%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20li%3Ep%20%7B%0Amargin%2Dtop%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20li%2Bli%20%7B%0Amargin%2Dtop%3A%20%2E25em%3B%0A%7D%0A%2Emarkdown%2Dbody%20dl%20%7B%0Apadding%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20dl%20dt%20%7B%0Apadding%3A%200%3B%0Amargin%2Dtop%3A%201rem%3B%0Afont%2Dsize%3A%201em%3B%0Afont%2Dstyle%3A%20italic%3B%0Afont%2Dweight%3A%20600%3B%0A%7D%0A%2Emarkdown%2Dbody%20dl%20dd%20%7B%0Apadding%3A%200%201rem%3B%0Amargin%2Dbottom%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20th%20%7B%0Afont%2Dweight%3A%20600%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20th%2C%0A%2Emarkdown%2Dbody%20table%20td%20%7B%0Apadding%3A%206px%2013px%3B%0Aborder%3A%201px%20solid%20%23d1d9e0%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20td%3E%3Alast%2Dchild%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20tr%20%7B%0Abackground%2Dcolor%3A%20%23ffffff%3B%0Aborder%2Dtop%3A%201px%20solid%20%23d1d9e0b3%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20tr%3Anth%2Dchild%282n%29%20%7B%0Abackground%2Dcolor%3A%20%23f6f8fa%3B%0A%7D%0A%2Emarkdown%2Dbody%20table%20img%20%7B%0Abackground%2Dcolor%3A%20transparent%3B%0A%7D%0A%2Emarkdown%2Dbody%20img%5Balign%3Dright%5D%20%7B%0Apadding%2Dleft%3A%2020px%3B%0A%7D%0A%2Emarkdown%2Dbody%20img%5Balign%3Dleft%5D%20%7B%0Apadding%2Dright%3A%2020px%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Eemoji%20%7B%0Amax%2Dwidth%3A%20none%3B%0Avertical%2Dalign%3A%20text%2Dtop%3B%0Abackground%2Dcolor%3A%20transparent%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Eframe%20%7B%0Adisplay%3A%20block%3B%0Aoverflow%3A%20hidden%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Eframe%3Espan%20%7B%0Adisplay%3A%20block%3B%0Afloat%3A%20left%3B%0Awidth%3A%20auto%3B%0Apadding%3A%207px%3B%0Amargin%3A%2013px%200%200%3B%0Aoverflow%3A%20hidden%3B%0Aborder%3A%201px%20solid%20%23d1d9e0%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Eframe%20span%20img%20%7B%0Adisplay%3A%20block%3B%0Afloat%3A%20left%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Eframe%20span%20span%20%7B%0Adisplay%3A%20block%3B%0Apadding%3A%205px%200%200%3B%0Aclear%3A%20both%3B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dcenter%20%7B%0Adisplay%3A%20block%3B%0Aoverflow%3A%20hidden%3B%0Aclear%3A%20both%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dcenter%3Espan%20%7B%0Adisplay%3A%20block%3B%0Amargin%3A%2013px%20auto%200%3B%0Aoverflow%3A%20hidden%3B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dcenter%20span%20img%20%7B%0Amargin%3A%200%20auto%3B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dright%20%7B%0Adisplay%3A%20block%3B%0Aoverflow%3A%20hidden%3B%0Aclear%3A%20both%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dright%3Espan%20%7B%0Adisplay%3A%20block%3B%0Amargin%3A%2013px%200%200%3B%0Aoverflow%3A%20hidden%3B%0Atext%2Dalign%3A%20right%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Ealign%2Dright%20span%20img%20%7B%0Amargin%3A%200%3B%0Atext%2Dalign%3A%20right%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Efloat%2Dleft%20%7B%0Adisplay%3A%20block%3B%0Afloat%3A%20left%3B%0Amargin%2Dright%3A%2013px%3B%0Aoverflow%3A%20hidden%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Efloat%2Dleft%20span%20%7B%0Amargin%3A%2013px%200%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Efloat%2Dright%20%7B%0Adisplay%3A%20block%3B%0Afloat%3A%20right%3B%0Amargin%2Dleft%3A%2013px%3B%0Aoverflow%3A%20hidden%3B%0A%7D%0A%2Emarkdown%2Dbody%20span%2Efloat%2Dright%3Espan%20%7B%0Adisplay%3A%20block%3B%0Amargin%3A%2013px%20auto%200%3B%0Aoverflow%3A%20hidden%3B%0Atext%2Dalign%3A%20right%3B%0A%7D%0A%2Emarkdown%2Dbody%20code%2C%0A%2Emarkdown%2Dbody%20tt%20%7B%0Apadding%3A%20%2E2em%20%2E4em%3B%0Amargin%3A%200%3B%0Afont%2Dsize%3A%2085%25%3B%0Awhite%2Dspace%3A%20break%2Dspaces%3B%0Abackground%2Dcolor%3A%20%23818b981f%3B%0Aborder%2Dradius%3A%206px%3B%0A%7D%0A%2Emarkdown%2Dbody%20code%20br%2C%0A%2Emarkdown%2Dbody%20tt%20br%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20del%20code%20%7B%0Atext%2Ddecoration%3A%20inherit%3B%0A%7D%0A%2Emarkdown%2Dbody%20samp%20%7B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0A%2Emarkdown%2Dbody%20pre%20code%20%7B%0Afont%2Dsize%3A%20100%25%3B%0A%7D%0A%2Emarkdown%2Dbody%20pre%3Ecode%20%7B%0Apadding%3A%200%3B%0Amargin%3A%200%3B%0Aword%2Dbreak%3A%20normal%3B%0Awhite%2Dspace%3A%20pre%3B%0Abackground%3A%20transparent%3B%0Aborder%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ehighlight%20%7B%0Amargin%2Dbottom%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ehighlight%20pre%20%7B%0Amargin%2Dbottom%3A%200%3B%0Aword%2Dbreak%3A%20normal%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ehighlight%20pre%2C%0A%2Emarkdown%2Dbody%20pre%20%7B%0Apadding%3A%201rem%3B%0Aoverflow%3A%20auto%3B%0Afont%2Dsize%3A%2085%25%3B%0Aline%2Dheight%3A%201%2E45%3B%0Acolor%3A%20%231f2328%3B%0Abackground%2Dcolor%3A%20%23f6f8fa%3B%0Aborder%2Dradius%3A%206px%3B%0A%7D%0A%2Emarkdown%2Dbody%20pre%20code%2C%0A%2Emarkdown%2Dbody%20pre%20tt%20%7B%0Adisplay%3A%20inline%3B%0Amax%2Dwidth%3A%20auto%3B%0Apadding%3A%200%3B%0Amargin%3A%200%3B%0Aoverflow%3A%20visible%3B%0Aline%2Dheight%3A%20inherit%3B%0Aword%2Dwrap%3A%20normal%3B%0Abackground%2Dcolor%3A%20transparent%3B%0Aborder%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ecsv%2Ddata%20td%2C%0A%2Emarkdown%2Dbody%20%2Ecsv%2Ddata%20th%20%7B%0Apadding%3A%205px%3B%0Aoverflow%3A%20hidden%3B%0Afont%2Dsize%3A%2012px%3B%0Aline%2Dheight%3A%201%3B%0Atext%2Dalign%3A%20left%3B%0Awhite%2Dspace%3A%20nowrap%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ecsv%2Ddata%20%2Eblob%2Dnum%20%7B%0Apadding%3A%2010px%200%2E5rem%209px%3B%0Atext%2Dalign%3A%20right%3B%0Abackground%3A%20%23ffffff%3B%0Aborder%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ecsv%2Ddata%20tr%20%7B%0Aborder%2Dtop%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ecsv%2Ddata%20th%20%7B%0Afont%2Dweight%3A%20600%3B%0Abackground%3A%20%23f6f8fa%3B%0Aborder%2Dtop%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Bdata%2Dfootnote%2Dref%5D%3A%3Abefore%20%7B%0Acontent%3A%20%22%5B%22%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Bdata%2Dfootnote%2Dref%5D%3A%3Aafter%20%7B%0Acontent%3A%20%22%5D%22%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20%7B%0Afont%2Dsize%3A%2012px%3B%0Acolor%3A%20%2359636e%3B%0Aborder%2Dtop%3A%201px%20solid%20%23d1d9e0%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20ol%20%7B%0Apadding%2Dleft%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20ol%20ul%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0Apadding%2Dleft%3A%201rem%3B%0Amargin%2Dtop%3A%201rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20li%20%7B%0Aposition%3A%20relative%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20li%3Atarget%3A%3Abefore%20%7B%0Aposition%3A%20absolute%3B%0Atop%3A%20calc%280%2E5rem%2A%2D1%29%3B%0Aright%3A%20calc%280%2E5rem%2A%2D1%29%3B%0Abottom%3A%20calc%280%2E5rem%2A%2D1%29%3B%0Aleft%3A%20calc%281%2E5rem%2A%2D1%29%3B%0Apointer%2Devents%3A%20none%3B%0Acontent%3A%20%22%22%3B%0Aborder%3A%202px%20solid%20%230969da%3B%0Aborder%2Dradius%3A%206px%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20li%3Atarget%20%7B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Efootnotes%20%2Edata%2Dfootnote%2Dbackref%20g%2Demoji%20%7B%0Afont%2Dfamily%3A%20monospace%3B%0A%7D%0A%2Emarkdown%2Dbody%20body%3Ahas%28%3Amodal%29%20%7B%0Apadding%2Dright%3A%20var%28%2D%2Ddialog%2Dscrollgutter%29%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dc%20%7B%0Acolor%3A%20%2359636e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dc1%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Ds%20%2Epl%2Dv%20%7B%0Acolor%3A%20%230550ae%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2De%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Den%20%7B%0Acolor%3A%20%236639ba%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dsmi%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Ds%20%2Epl%2Ds1%20%7B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dent%20%7B%0Acolor%3A%20%230550ae%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dk%20%7B%0Acolor%3A%20%23cf222e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Ds%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dpds%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Ds%20%2Epl%2Dpse%20%2Epl%2Ds1%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dsr%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dsr%20%2Epl%2Dcce%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dsr%20%2Epl%2Dsre%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dsr%20%2Epl%2Dsra%20%7B%0Acolor%3A%20%230a3069%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dv%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dsmw%20%7B%0Acolor%3A%20%23953800%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dbu%20%7B%0Acolor%3A%20%2382071e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dii%20%7B%0Acolor%3A%20%23f6f8fa%3B%0Abackground%2Dcolor%3A%20%2382071e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dc2%20%7B%0Acolor%3A%20%23f6f8fa%3B%0Abackground%2Dcolor%3A%20%23cf222e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dsr%20%2Epl%2Dcce%20%7B%0Afont%2Dweight%3A%20bold%3B%0Acolor%3A%20%23116329%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dml%20%7B%0Acolor%3A%20%233b2300%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmh%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dmh%20%2Epl%2Den%2C%0A%2Emarkdown%2Dbody%20%2Epl%2Dms%20%7B%0Afont%2Dweight%3A%20bold%3B%0Acolor%3A%20%230550ae%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmi%20%7B%0Afont%2Dstyle%3A%20italic%3B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmb%20%7B%0Afont%2Dweight%3A%20bold%3B%0Acolor%3A%20%231f2328%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmd%20%7B%0Acolor%3A%20%2382071e%3B%0Abackground%2Dcolor%3A%20%23ffebe9%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmi1%20%7B%0Acolor%3A%20%23116329%3B%0Abackground%2Dcolor%3A%20%23dafbe1%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmc%20%7B%0Acolor%3A%20%23953800%3B%0Abackground%2Dcolor%3A%20%23ffd8b5%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmi2%20%7B%0Acolor%3A%20%23d1d9e0%3B%0Abackground%2Dcolor%3A%20%230550ae%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dmdr%20%7B%0Afont%2Dweight%3A%20bold%3B%0Acolor%3A%20%238250df%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dba%20%7B%0Acolor%3A%20%2359636e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dsg%20%7B%0Acolor%3A%20%23818b98%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Epl%2Dcorl%20%7B%0Atext%2Ddecoration%3A%20underline%3B%0Acolor%3A%20%230a3069%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Brole%3Dbutton%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20%5Brole%3Dtabpanel%5D%5Btabindex%3D%220%22%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20button%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20summary%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20a%3Afocus%3Anot%28%3Afocus%2Dvisible%29%20%7B%0Aoutline%3A%20none%3B%0Abox%2Dshadow%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%5Btabindex%3D%220%22%5D%3Afocus%3Anot%28%3Afocus%2Dvisible%29%2C%0A%2Emarkdown%2Dbody%20details%2Ddialog%3Afocus%3Anot%28%3Afocus%2Dvisible%29%20%7B%0Aoutline%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20g%2Demoji%20%7B%0Adisplay%3A%20inline%2Dblock%3B%0Amin%2Dwidth%3A%201ch%3B%0Afont%2Dfamily%3A%20%22Apple%20Color%20Emoji%22%2C%22Segoe%20UI%20Emoji%22%2C%22Segoe%20UI%20Symbol%22%3B%0Afont%2Dsize%3A%201em%3B%0Afont%2Dstyle%3A%20normal%20%21important%3B%0Afont%2Dweight%3A%20400%3B%0Aline%2Dheight%3A%201%3B%0Avertical%2Dalign%3A%20%2D0%2E075em%3B%0A%7D%0A%2Emarkdown%2Dbody%20g%2Demoji%20img%20%7B%0Awidth%3A%201em%3B%0Aheight%3A%201em%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%20%7B%0Alist%2Dstyle%2Dtype%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%20label%20%7B%0Afont%2Dweight%3A%20400%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%2Eenabled%20label%20%7B%0Acursor%3A%20pointer%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%2B%2Etask%2Dlist%2Ditem%20%7B%0Amargin%2Dtop%3A%200%2E25rem%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%20%2Ehandle%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Etask%2Dlist%2Ditem%2Dcheckbox%20%7B%0Amargin%3A%200%20%2E2em%20%2E25em%20%2D1%2E4em%3B%0Avertical%2Dalign%3A%20middle%3B%0A%7D%0A%2Emarkdown%2Dbody%20ul%3Adir%28rtl%29%20%2Etask%2Dlist%2Ditem%2Dcheckbox%20%7B%0Amargin%3A%200%20%2D1%2E6em%20%2E25em%20%2E2em%3B%0A%7D%0A%2Emarkdown%2Dbody%20ol%3Adir%28rtl%29%20%2Etask%2Dlist%2Ditem%2Dcheckbox%20%7B%0Amargin%3A%200%20%2D1%2E6em%20%2E25em%20%2E2em%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Econtains%2Dtask%2Dlist%3Ahover%20%2Etask%2Dlist%2Ditem%2Dconvert%2Dcontainer%2C%0A%2Emarkdown%2Dbody%20%2Econtains%2Dtask%2Dlist%3Afocus%2Dwithin%20%2Etask%2Dlist%2Ditem%2Dconvert%2Dcontainer%20%7B%0Adisplay%3A%20block%3B%0Awidth%3A%20auto%3B%0Aheight%3A%2024px%3B%0Aoverflow%3A%20visible%3B%0Aclip%3A%20auto%3B%0A%7D%0A%2Emarkdown%2Dbody%20%3A%3A%2Dwebkit%2Dcalendar%2Dpicker%2Dindicator%20%7B%0Afilter%3A%20invert%2850%25%29%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%20%7B%0Apadding%3A%200%2E5rem%201rem%3B%0Amargin%2Dbottom%3A%201rem%3B%0Acolor%3A%20inherit%3B%0Aborder%2Dleft%3A%20%2E25em%20solid%20%23d1d9e0%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%3E%3Afirst%2Dchild%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%3E%3Alast%2Dchild%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Adisplay%3A%20flex%3B%0Afont%2Dweight%3A%20500%3B%0Aalign%2Ditems%3A%20center%3B%0Aline%2Dheight%3A%201%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dnote%20%7B%0Aborder%2Dleft%2Dcolor%3A%20%230969da%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dnote%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Acolor%3A%20%230969da%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dimportant%20%7B%0Aborder%2Dleft%2Dcolor%3A%20%238250df%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dimportant%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Acolor%3A%20%238250df%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dwarning%20%7B%0Aborder%2Dleft%2Dcolor%3A%20%239a6700%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dwarning%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Acolor%3A%20%239a6700%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dtip%20%7B%0Aborder%2Dleft%2Dcolor%3A%20%231a7f37%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dtip%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Acolor%3A%20%231a7f37%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dcaution%20%7B%0Aborder%2Dleft%2Dcolor%3A%20%23cf222e%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Emarkdown%2Dalert%2Emarkdown%2Dalert%2Dcaution%20%2Emarkdown%2Dalert%2Dtitle%20%7B%0Acolor%3A%20%23d1242f%3B%0A%7D%0A%2Emarkdown%2Dbody%3E%2A%3Afirst%2Dchild%3E%2Eheading%2Delement%3Afirst%2Dchild%20%7B%0Amargin%2Dtop%3A%200%20%21important%3B%0A%7D%0A%2Emarkdown%2Dbody%20%2Ehighlight%20pre%3Ahas%28%2B%2Ezeroclipboard%2Dcontainer%29%20%7B%0Amin%2Dheight%3A%2052px%3B%0A%7D%0A" rel="stylesheet">
+  </head>
+<body>
+  <div class="container">
+    <article class="markdown-body">
+      <h1 id="claude.md---traffic-monitor-project">CLAUDE.md - Traffic
+      Monitor Project</h1>
+      <h2 id="overview">Overview</h2>
+      <p>A traffic monitoring system that queries the Google Routes API
+      to track commute times between predefined locations in Buenos
+      Aires, Argentina. Data is stored in SQLite and visualized with
+      Grafana.</p>
+      <p><strong>Location:</strong>
+      <code>~/docker/traffic-monitor/</code> on the Arch Linux home
+      server</p>
+      <hr />
+      <h2 id="architecture">Architecture</h2>
+      <pre><code>┌─────────────────────┐     ┌──────────────────┐     ┌─────────────┐
+│   Systemd Timers    │────▶│  Docker Compose  │────▶│ Google API  │
+│  (day/night sched)  │     │  (one container  │     │  Routes v2  │
+└─────────────────────┘     │   per route)     │     └─────────────┘
+                            └────────┬─────────┘
+                                     │
+                            ┌────────▼─────────┐
+                            │   SQLite DB      │
+                            │  ./data/traffic.db│
+                            └────────┬─────────┘
+                                     │
+                            ┌────────▼─────────┐
+                            │     Grafana      │
+                            │   (port 3000)    │
+                            └──────────────────┘</code></pre>
+      <p><strong>Execution model:</strong> Containers are NOT
+      long-running. They have <code>restart: &quot;no&quot;</code> and are
+      triggered by systemd timers
+      (<code>traffic-monitor-day.timer</code>,
+      <code>traffic-monitor-night.timer</code>) which run
+      <code>docker compose run --rm &lt;service&gt;</code>.</p>
+      <hr />
+      <h2 id="files">Files</h2>
+      <table>
+      <thead>
+      <tr>
+      <th>File</th>
+      <th>Purpose</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><code>traffic_monitor.py</code></td>
+      <td>Main script - queries API, stores to SQLite</td>
+      </tr>
+      <tr>
+      <td><code>docker-compose.yml</code></td>
+      <td>Defines route services + Grafana</td>
+      </tr>
+      <tr>
+      <td><code>.env</code></td>
+      <td>API key, addresses, coordinates (NOT in git)</td>
+      </tr>
+      <tr>
+      <td><code>Dockerfile</code></td>
+      <td>Python 3.11-slim with requests library</td>
+      </tr>
+      <tr>
+      <td><code>data/traffic.db</code></td>
+      <td>SQLite database (NOT in git)</td>
+      </tr>
+      <tr>
+      <td><code>grafana-data/</code></td>
+      <td>Grafana runtime data (NOT in git)</td>
+      </tr>
+      <tr>
+      <td><code>migrate_database.py</code></td>
+      <td>Database migration tool (for schema changes)</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="active-routes-7-total">Active Routes (7 total)</h2>
+      <table>
+      <colgroup>
+      <col style="width: 43%" />
+      <col style="width: 21%" />
+      <col style="width: 34%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th>Service Name</th>
+      <th>Route</th>
+      <th>Direction</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><code>traffic-monitor-home-work</code></td>
+      <td>Pilar → Chiclana office</td>
+      <td>Morning commute</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-work-home</code></td>
+      <td>Chiclana office → Pilar</td>
+      <td>Evening commute</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-home-cabahome</code></td>
+      <td>Pilar → CABA apartment</td>
+      <td>To city</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-cabahome-home</code></td>
+      <td>CABA apartment → Pilar</td>
+      <td>From city</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-workclient-home</code></td>
+      <td>Client office (Peru) → Pilar</td>
+      <td>From client</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-peaje-puesto</code></td>
+      <td>Peaje Pilar → Puesto Uno</td>
+      <td>Highway segment</td>
+      </tr>
+      <tr>
+      <td><code>traffic-monitor-puesto-peaje</code></td>
+      <td>Puesto Uno → Peaje Pilar</td>
+      <td>Highway segment (reverse)</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="environment-variables">Environment Variables</h2>
+      <p>Each container receives: - <code>GOOGLE_ROUTES_API_KEY</code> -
+      API authentication - <code>ORIGIN_ADDRESS</code> - Start point
+      (address string or <code>lat,lng</code>) -
+      <code>DESTINATION_ADDRESS</code> - End point (address string or
+      <code>lat,lng</code>) - <code>ROUTE_NAME</code> - Identifier
+      stored in database - <code>TZ</code> -
+      <code>America/Argentina/Buenos_Aires</code></p>
+      <p><strong>Address format:</strong> Either full address string or
+      coordinates without spaces: <code>-34.457028,-58.721389</code></p>
+      <hr />
+      <h2 id="database-schema">Database Schema</h2>
+      <div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> traffic_data (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> <span class="dt">INTEGER</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span> AUTOINCREMENT,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    route_name TEXT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">timestamp</span> <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,        <span class="co">-- Unix timestamp</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    duration_seconds <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>, <span class="co">-- Travel time in seconds (traffic-aware)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    distance_meters <span class="dt">INTEGER</span>,           <span class="co">-- Route distance in meters</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    day_of_week <span class="dt">INTEGER</span>,               <span class="co">-- 0=Monday, 6=Sunday</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">hour</span> <span class="dt">INTEGER</span>,                      <span class="co">-- 0-23</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">minute</span> <span class="dt">INTEGER</span>                     <span class="co">-- 0-59</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Indexes</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_route_timestamp <span class="kw">ON</span> traffic_data(route_name, <span class="dt">timestamp</span>);</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_route_day_hour <span class="kw">ON</span> traffic_data(route_name, day_of_week, <span class="kw">hour</span>);</span></code></pre></div>
+      <p><strong>Note:</strong> The schema was simplified in December
+      2024 to remove unused columns
+      (<code>duration_in_traffic_seconds</code>,
+      <code>traffic_ratio</code>, <code>route_condition</code>).
+      Historical data was migrated preserving all meaningful
+      information.</p>
+      <hr />
+      <h2 id="api-details">API Details</h2>
+      <p><strong>Endpoint:</strong>
+      <code>https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix</code></p>
+      <p><strong>Request:</strong> - <code>travelMode: DRIVE</code> -
+      <code>routingPreference: TRAFFIC_AWARE</code> -
+      <code>departureTime</code>: Current time + 1 minute (required for
+      traffic data)</p>
+      <p><strong>Response fields used:</strong> - <code>duration</code>
+      - Travel time string (e.g., “1800s”) - stored as
+      <code>duration_seconds</code> - <code>distanceMeters</code> -
+      Route distance - stored as <code>distance_meters</code></p>
+      <p><strong>Quota:</strong> 40,000 requests/month free tier (~11
+      routes max with current scheduling)</p>
+      <hr />
+      <h2 id="retry-logic">Retry Logic</h2>
+      <ul>
+      <li><code>MAX_RETRIES = 5</code></li>
+      <li><code>RETRY_DELAY = 60</code> seconds between attempts</li>
+      <li>Exits with success on first successful API call</li>
+      <li>Logs all attempts and final outcome</li>
+      </ul>
+      <hr />
+      <h2 id="systemd-integration">Systemd Integration</h2>
+      <p>Timers are defined in <code>/etc/systemd/system/</code>: -
+      <code>traffic-monitor-day.timer</code> - Runs every 10 minutes
+      during day - <code>traffic-monitor-night.timer</code> - Runs every
+      30 minutes at night - <code>traffic-monitor.service</code> -
+      Contains <code>ExecStart</code> lines for each route</p>
+      <p>Each route runs as:
+      <code>docker compose run --rm &lt;service-name&gt;</code></p>
+      <hr />
+      <h2 id="common-operations">Common Operations</h2>
+      <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test a single route manually</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/docker/traffic-monitor</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose run <span class="at">--rm</span> traffic-monitor-home-work</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check recent data</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> <span class="at">-column</span> <span class="at">-header</span> ./data/traffic.db <span class="st">&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT route_name, datetime(timestamp, &#39;unixepoch&#39;, &#39;localtime&#39;) as time,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">       duration_seconds/60.0 as minutes, distance_meters/1000.0 as km</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">FROM traffic_data</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY timestamp DESC LIMIT 10;&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Count samples per route</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ex">sqlite3</span> <span class="at">-column</span> <span class="at">-header</span> ./data/traffic.db <span class="st">&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT route_name, COUNT(*) as samples</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">FROM traffic_data</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY route_name;&quot;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Check timer status</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> list-timers <span class="kw">|</span> <span class="fu">grep</span> traffic</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># View Grafana</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># http://192.168.0.50:3000 (admin/admin)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Rebuild after code changes</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose build</span></code></pre></div>
+      <hr />
+      <h2 id="adding-a-new-route">Adding a New Route</h2>
+      <ol type="1">
+      <li><p>Add address to <code>.env</code>:</p>
+      <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">NEW_LOCATION</span><span class="op">=</span>Address <span class="ex">or</span> <span class="at">-34.123,-58.456</span></span></code></pre></div></li>
+      <li><p>Add service to <code>docker-compose.yml</code> (copy
+      existing, change ROUTE_NAME)</p></li>
+      <li><p>Add <code>ExecStart</code> line to systemd service:</p>
+      <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nvim /etc/systemd/system/traffic-monitor.service</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Add: ExecStart=/usr/bin/docker compose run --rm traffic-monitor-new-route</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl daemon-reload</span></code></pre></div></li>
+      <li><p>Test manually, verify in database</p></li>
+      </ol>
+      <hr />
+      <h2 id="known-quirks">Known Quirks</h2>
+      <ol type="1">
+      <li><p><strong>Traffic-aware duration only</strong>: The Google
+      Routes API only returns traffic-aware travel times. There is no
+      baseline “no-traffic” duration available, so
+      <code>duration_seconds</code> always reflects current traffic
+      conditions.</p></li>
+      <li><p><strong>Coordinate format</strong>: Must be
+      <code>lat,lng</code> with NO spaces. The script detects
+      coordinates by checking if the string contains a comma but no
+      letters.</p></li>
+      <li><p><strong>Database locking</strong>: Multiple containers
+      write to the same SQLite file. SQLite handles this but could
+      bottleneck if many routes run simultaneously.</p></li>
+      <li><p><strong>API response validation</strong>: The script no
+      longer validates route conditions. It assumes any successful API
+      response with duration data is valid and stores it.</p></li>
+      </ol>
+      <hr />
+      <h2 id="database-migrations">Database Migrations</h2>
+      <p>When making schema changes, follow this pattern:</p>
+      <ol type="1">
+      <li>Create a migration script (see
+      <code>migrate_database.py</code> as example)</li>
+      <li>Test migration on a backup copy of the database first</li>
+      <li>Migration steps:
+      <ul>
+      <li>Create new table with updated schema</li>
+      <li>Copy data from old table (SELECT INTO new table)</li>
+      <li>Verify row counts match</li>
+      <li>Drop old table</li>
+      <li>Rename new table</li>
+      <li>Recreate indexes</li>
+      </ul></li>
+      <li>Update <code>traffic_monitor.py</code> to match new
+      schema</li>
+      <li>Rebuild Docker containers</li>
+      <li>Test with manual route execution</li>
+      </ol>
+      <p><strong>Historical migrations:</strong> - 2024-12-24: Removed
+      <code>duration_in_traffic_seconds</code>,
+      <code>traffic_ratio</code>, <code>route_condition</code> columns
+      (20,010 records migrated)</p>
+      <hr />
+      <h2 id="integration-with-server">Integration with Server</h2>
+      <ul>
+      <li>Connected to <code>media-network</code> Docker bridge</li>
+      <li>Grafana accessible at port 3000 (local/VPN only)</li>
+      <li>Part of the home server monitoring stack</li>
+      <li>Documentation:
+      <code>~/documentation/traffic-monitor-documentation.md</code></li>
+      </ul>
+    </article>
+  </div>
+</body>
+</html>
