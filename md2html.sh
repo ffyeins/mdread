@@ -8,6 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Paths to template and CSS files
 TEMPLATE="$SCRIPT_DIR/template.html"
 CSS="$SCRIPT_DIR/github-markdown-light.css"
+SYNTAX_CSS="$SCRIPT_DIR/syntax-highlighting.css"
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <markdown-file> [<markdown-file> ...]"
@@ -35,8 +36,9 @@ for md_file in "$@"; do
         --embed-resources \
         --standalone \
         --css="$CSS" \
+        --css="$SYNTAX_CSS" \
         --metadata title="$title" \
-        --syntax-highlighting=default
+        --syntax-highlighting=pygments
 
     if [ $? -eq 0 ]; then
         echo "✓ Successfully created $html_file"
