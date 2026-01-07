@@ -6,26 +6,37 @@ This project converts Markdown files to self-contained HTML with GitHub's exact 
 ## What We Built
 
 ### Markdown to HTML Pipeline
-Created a command-line script to generate self-contained HTML files with GitHub styling. The script automatically finds its resources and can be called from anywhere.
+Created two command-line scripts for working with markdown and HTML:
+
+1. **md2html**: Converts markdown to persistent HTML files with GitHub styling
+2. **mdread**: Quick preview of markdown in browser (temporary files, no leftovers)
+
+Both scripts automatically find their resources and can be called from any directory.
 
 **Installation Location**: `~/dotfiles/scripts/md2html/`
 
 **Files Required**:
-1. `md2html.sh` - Conversion script
-2. `github-markdown-light.css` - GitHub's official light theme CSS
-3. `template.html` - HTML wrapper with proper layout
+1. `md2html.sh` - Conversion script (persistent HTML)
+2. `mdread.sh` - Preview script (temporary HTML)
+3. `github-markdown-light.css` - GitHub's official light theme CSS
+4. `template.html` - HTML wrapper with proper layout
 
 **Usage**:
 ```bash
-# Via alias (recommended)
+# Convert to HTML file (via alias)
 md2html document.md
 md2html file1.md file2.md *.md
 
-# Direct call
+# Quick preview in browser (via alias)
+mdread document.md
+mdread file1.md file2.md *.md
+
+# Direct calls
 ~/dotfiles/scripts/md2html/md2html.sh document.md
+~/dotfiles/scripts/md2html/mdread.sh document.md
 ```
 
-The script uses `SCRIPT_DIR` to locate template and CSS files, allowing it to be called from any directory.
+Both scripts use `SCRIPT_DIR` to locate template and CSS files, allowing them to be called from any directory.
 
 ## File Contents
 
@@ -74,7 +85,16 @@ $endif$
 ```
 
 ### md2html.sh
-The script uses `--syntax-highlighting=default` to enable Pandoc's built-in syntax highlighting. The `$highlighting-css$` variable in the template allows Pandoc to inject the necessary CSS for syntax highlighting.
+The script uses `--syntax-highlighting=pygments` to enable Pandoc's built-in syntax highlighting. The `$highlighting-css$` variable in the template allows Pandoc to inject the necessary CSS for syntax highlighting. Supports batch processing of multiple files.
+
+### mdread.sh
+Preview script that creates temporary HTML files for quick viewing in browser:
+- Uses `mktemp` to create temp files in `/tmp/` (e.g., `/tmp/mdread.abc123.html`)
+- Supports multiple files (opens each in a new browser tab)
+- Opens HTML in default browser using `open` command
+- Cleans up all temp files after 3 seconds (background process)
+- No persistent files or leftovers
+- Useful for read-only viewing without accidental edits
 
 ## Key Design Decisions
 
@@ -95,10 +115,15 @@ The script uses `--syntax-highlighting=default` to enable Pandoc's built-in synt
 
 4. **CSS Source**: Using official `github-markdown-light.css` from sindresorhus/github-markdown-css
 
-5. **Syntax Highlighting**: Using Pandoc's built-in highlighting with `--syntax-highlighting=default`:
+5. **Syntax Highlighting**: Using Pandoc's built-in highlighting with `--syntax-highlighting=pygments`:
    - Supports all major programming languages
    - CSS automatically embedded via `$highlighting-css$` template variable
    - Alternative styles available: pygments, tango, kate, monochrome, breezedark, espresso, zenburn, haddock
+
+6. **Two-Script Approach**:
+   - **md2html**: For creating persistent HTML files to share or archive
+   - **mdread**: For quick read-only viewing without risk of accidental edits or file clutter
+   - Temporary files cleaned up automatically (3-second delay for browser loading)
 
 ## Dependencies
 
@@ -109,19 +134,24 @@ The script uses `--syntax-highlighting=default` to enable Pandoc's built-in synt
 ## Directory Structure
 ```
 ~/dotfiles/scripts/md2html/
-├── md2html.sh                   # Conversion script
+├── md2html.sh                   # Conversion script (persistent HTML)
+├── mdread.sh                    # Preview script (temporary HTML)
 ├── github-markdown-light.css    # GitHub light theme CSS
 ├── template.html                # HTML template with layout
 └── README.md                    # Documentation
 ```
 
-The script can be called from any directory - it will locate the template and CSS files relative to its own location.
+Both scripts can be called from any directory - they locate the template and CSS files relative to their own location.
 
 ## Installation Paths (macOS)
 
 - **Script location**: `~/dotfiles/scripts/md2html/`
 - **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
-- **Alias**: Add to `~/.zshrc`: `alias md2html='~/dotfiles/scripts/md2html/md2html.sh'`
+- **Aliases**: Add to `~/.zshrc`:
+  ```bash
+  alias md2html='~/dotfiles/scripts/md2html/md2html.sh'
+  alias mdread='~/dotfiles/scripts/md2html/mdread.sh'
+  ```
 
 ## User Preferences
 
