@@ -7,9 +7,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Paths to template and CSS files
-TEMPLATE="$SCRIPT_DIR/template.html"
-CSS="$SCRIPT_DIR/github-markdown-light.css"
-SYNTAX_CSS="$SCRIPT_DIR/syntax-highlighting.css"
+TEMPLATE="$SCRIPT_DIR/md2html/template.html"
+CSS="$SCRIPT_DIR/md2html/github-markdown-light.css"
+SYNTAX_CSS="$SCRIPT_DIR/md2html/syntax-highlighting.css"
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <markdown-file> [<markdown-file> ...]"
