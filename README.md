@@ -24,7 +24,7 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 
 1. **Ensure files are in your dotfiles directory**:
    ```bash
-   ~/dotfiles/scripts/md2html/
+   ~/dotfiles/scripts/mdread/
    ├── md2html.sh
    ├── mdread.sh
    ├── template.html
@@ -33,16 +33,16 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 
 2. **Make the scripts executable**:
    ```bash
-   chmod +x ~/dotfiles/scripts/md2html/md2html.sh
-   chmod +x ~/dotfiles/scripts/md2html/mdread.sh
+   chmod +x ~/dotfiles/scripts/mdread/md2html.sh
+   chmod +x ~/dotfiles/scripts/mdread/mdread.sh
    ```
 
 3. **Create aliases** (recommended):
 
    Add to your `~/.zshrc`:
    ```bash
-   alias md2html='~/dotfiles/scripts/md2html/md2html.sh'
-   alias mdread='~/dotfiles/scripts/md2html/mdread.sh'
+   alias md2html='~/dotfiles/scripts/mdread/md2html.sh'
+   alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
    ```
 
    Then reload your shell config:
@@ -67,8 +67,8 @@ md2html *.md
 
 **Without alias:**
 ```bash
-~/dotfiles/scripts/md2html/md2html.sh document.md
-~/dotfiles/scripts/md2html/md2html.sh *.md
+~/dotfiles/scripts/mdread/md2html.sh document.md
+~/dotfiles/scripts/mdread/md2html.sh *.md
 ```
 
 ### Quick preview in browser (mdread)
@@ -84,8 +84,8 @@ mdread *.md
 
 **Without alias:**
 ```bash
-~/dotfiles/scripts/md2html/mdread.sh document.md
-~/dotfiles/scripts/md2html/mdread.sh *.md
+~/dotfiles/scripts/mdread/mdread.sh document.md
+~/dotfiles/scripts/mdread/mdread.sh *.md
 ```
 
 Temp HTML files are created in `/tmp/` and automatically cleaned up after 3 seconds. No files are left behind.
