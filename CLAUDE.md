@@ -13,7 +13,7 @@ Created two command-line scripts for working with markdown and HTML:
 
 Both scripts automatically find their resources and can be called from any directory.
 
-**Installation Location**: `~/dotfiles/scripts/md2html/`
+**Installation Location**: `~/dotfiles/scripts/mdread/`
 
 **Files Required**:
 1. `md2html.sh` - Conversion script (persistent HTML)
@@ -32,8 +32,8 @@ mdread document.md
 mdread file1.md file2.md *.md
 
 # Direct calls
-~/dotfiles/scripts/md2html/md2html.sh document.md
-~/dotfiles/scripts/md2html/mdread.sh document.md
+~/dotfiles/scripts/mdread/md2html.sh document.md
+~/dotfiles/scripts/mdread/mdread.sh document.md
 ```
 
 Both scripts use `SCRIPT_DIR` to locate template and CSS files, allowing them to be called from any directory.
@@ -133,7 +133,7 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 
 ## Directory Structure
 ```
-~/dotfiles/scripts/md2html/
+~/dotfiles/scripts/mdread/
 ├── md2html.sh                   # Conversion script (persistent HTML)
 ├── mdread.sh                    # Preview script (temporary HTML)
 ├── github-markdown-light.css    # GitHub light theme CSS
@@ -145,12 +145,12 @@ Both scripts can be called from any directory - they locate the template and CSS
 
 ## Installation Paths (macOS)
 
-- **Script location**: `~/dotfiles/scripts/md2html/`
+- **Script location**: `~/dotfiles/scripts/mdread/`
 - **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
 - **Aliases**: Add to `~/.zshrc`:
   ```bash
-  alias md2html='~/dotfiles/scripts/md2html/md2html.sh'
-  alias mdread='~/dotfiles/scripts/md2html/mdread.sh'
+  alias md2html='~/dotfiles/scripts/mdread/md2html.sh'
+  alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
   ```
 
 ## User Preferences
