@@ -25,15 +25,16 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 1. **Ensure files are in your dotfiles directory**:
    ```bash
    ~/dotfiles/scripts/mdread/
-   ├── md2html.sh
-   ├── mdread.sh
-   ├── template.html
-   └── github-markdown-light.css
+   ├── md2html/
+   │   ├── md2html.sh
+   │   ├── template.html
+   │   └── github-markdown-light.css
+   └── mdread.sh
    ```
 
 2. **Make the scripts executable**:
    ```bash
-   chmod +x ~/dotfiles/scripts/mdread/md2html.sh
+   chmod +x ~/dotfiles/scripts/mdread/md2html/md2html.sh
    chmod +x ~/dotfiles/scripts/mdread/mdread.sh
    ```
 
@@ -41,7 +42,7 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 
    Add to your `~/.zshrc`:
    ```bash
-   alias md2html='~/dotfiles/scripts/mdread/md2html.sh'
+   alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.sh'
    alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
    ```
 
@@ -67,8 +68,8 @@ md2html *.md
 
 **Without alias:**
 ```bash
-~/dotfiles/scripts/mdread/md2html.sh document.md
-~/dotfiles/scripts/mdread/md2html.sh *.md
+~/dotfiles/scripts/mdread/md2html/md2html.sh document.md
+~/dotfiles/scripts/mdread/md2html/md2html.sh *.md
 ```
 
 ### Quick preview in browser (mdread)
@@ -92,10 +93,10 @@ Temp HTML files are created in `/tmp/` and automatically cleaned up after 3 seco
 
 ## Files
 
-- `md2html.sh` - Conversion script (creates persistent HTML files)
+- `md2html/md2html.sh` - Conversion script (creates persistent HTML files)
 - `mdread.sh` - Preview script (temporary HTML, opens in browser)
-- `template.html` - HTML template with GitHub layout
-- `github-markdown-light.css` - GitHub's light theme CSS
+- `md2html/template.html` - HTML template with GitHub layout
+- `md2html/github-markdown-light.css` - GitHub's light theme CSS
 
 ## Output
 
