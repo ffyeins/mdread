@@ -16,10 +16,10 @@ Both scripts automatically find their resources and can be called from any direc
 **Installation Location**: `~/dotfiles/scripts/mdread/`
 
 **Files Required**:
-1. `md2html.sh` - Conversion script (persistent HTML)
+1. `md2html/md2html.sh` - Conversion script (persistent HTML)
 2. `mdread.sh` - Preview script (temporary HTML)
-3. `github-markdown-light.css` - GitHub's official light theme CSS
-4. `template.html` - HTML wrapper with proper layout
+3. `md2html/github-markdown-light.css` - GitHub's official light theme CSS
+4. `md2html/template.html` - HTML wrapper with proper layout
 
 **Usage**:
 ```bash
@@ -32,11 +32,11 @@ mdread document.md
 mdread file1.md file2.md *.md
 
 # Direct calls
-~/dotfiles/scripts/mdread/md2html.sh document.md
+~/dotfiles/scripts/mdread/md2html/md2html.sh document.md
 ~/dotfiles/scripts/mdread/mdread.sh document.md
 ```
 
-Both scripts use `SCRIPT_DIR` to locate template and CSS files, allowing them to be called from any directory.
+The `md2html.sh` script uses `SCRIPT_DIR` to locate template and CSS files in the same directory, allowing it to be called from anywhere.
 
 ## File Contents
 
@@ -134,14 +134,15 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 ## Directory Structure
 ```
 ~/dotfiles/scripts/mdread/
-├── md2html.sh                   # Conversion script (persistent HTML)
+├── md2html/
+│   ├── md2html.sh               # Conversion script (persistent HTML)
+│   ├── github-markdown-light.css # GitHub light theme CSS
+│   └── template.html            # HTML template with layout
 ├── mdread.sh                    # Preview script (temporary HTML)
-├── github-markdown-light.css    # GitHub light theme CSS
-├── template.html                # HTML template with layout
 └── README.md                    # Documentation
 ```
 
-Both scripts can be called from any directory - they locate the template and CSS files relative to their own location.
+The `md2html.sh` script can be called from any directory - it locates the template and CSS files relative to its own location.
 
 ## Installation Paths (macOS)
 
@@ -149,7 +150,7 @@ Both scripts can be called from any directory - they locate the template and CSS
 - **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
 - **Aliases**: Add to `~/.zshrc`:
   ```bash
-  alias md2html='~/dotfiles/scripts/mdread/md2html.sh'
+  alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.sh'
   alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
   ```
 
