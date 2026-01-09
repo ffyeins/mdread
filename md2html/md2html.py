@@ -5,6 +5,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Theme constants
+GITHUB_LIGHT = "github-markdown-light.css"
+GITHUB_DARK = "github-markdown-dark.css"
+
 
 def get_script_dir() -> Path:
     """Get the directory containing this script."""
@@ -29,7 +33,7 @@ def convert_md_to_html(md_path: Path) -> None:
     output_path = md_path.with_suffix(".html")
 
     # Read CSS files
-    github_css = read_css_file("github-markdown-light.css")
+    github_css = read_css_file(GITHUB_DARK)
     syntax_css = read_css_file("syntax-highlighting.css")
 
     # HTML template with embedded CSS
@@ -47,7 +51,7 @@ def convert_md_to_html(md_path: Path) -> None:
         html, body {{
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
+            background-color: #0d1117;
         }}
         .container {{
             box-sizing: border-box;
