@@ -1,0 +1,111 @@
+/*!
+ * GitHub Prettylights Color Mapping for Pandoc - Dark Mode
+ * Based on GitHub Dark (primer/github-syntax-theme-generator)
+ * Mapped from GitHub's dark theme colors to Pandoc's code span.* classes
+ * Copyright (c) 2012 - 2017 GitHub, Inc.
+ * Licensed under MIT (https://github.com/primer/github-syntax-theme-generator/blob/master/LICENSE)
+ */
+
+/* Base code block structure */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #959da5;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #444d56;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+
+/* GitHub Dark Prettylights color mapping */
+
+/* Comments - GitHub dark: #959da5 */
+code span.co { color: #959da5; font-style: italic; } /* Comment */
+
+/* Keywords & Control Flow - GitHub dark: #ea4a5a */
+code span.kw { color: #ea4a5a; } /* Keyword */
+code span.cf { color: #ea4a5a; } /* ControlFlow */
+
+/* Strings - GitHub dark: #79b8ff */
+code span.st { color: #79b8ff; } /* String */
+code span.vs { color: #79b8ff; } /* VerbatimString */
+code span.ss { color: #79b8ff; } /* SpecialString */
+code span.ch { color: #79b8ff; } /* Char */
+code span.sc { color: #79b8ff; } /* SpecialChar */
+
+/* Constants & Numbers - GitHub dark: #c8e1ff */
+code span.dv { color: #c8e1ff; } /* DecVal */
+code span.bn { color: #c8e1ff; } /* BaseN */
+code span.fl { color: #c8e1ff; } /* Float */
+code span.cn { color: #c8e1ff; } /* Constant */
+
+/* Functions - GitHub dark: #b392f0 */
+code span.fu { color: #b392f0; } /* Function */
+
+/* Built-ins & Tags - GitHub dark: #7bcc72 */
+code span.bu { color: #7bcc72; } /* BuiltIn */
+code span.im { color: #7bcc72; } /* Import */
+
+/* Variables - GitHub dark: #fb8532 */
+code span.va { color: #fb8532; } /* Variable */
+
+/* Data Types - GitHub dark: #ea4a5a */
+code span.dt { color: #ea4a5a; } /* DataType */
+
+/* Operators - GitHub dark: #f6f8fa */
+code span.op { color: #f6f8fa; } /* Operator */
+
+/* Preprocessor - GitHub dark: #c8e1ff */
+code span.pp { color: #c8e1ff; } /* Preprocessor */
+
+/* Attributes - GitHub dark: #7bcc72 */
+code span.at { color: #7bcc72; } /* Attribute */
+
+/* Documentation - GitHub dark: #959da5 */
+code span.do { color: #959da5; font-style: italic; } /* Documentation */
+
+/* Annotations & Comments - GitHub dark: #959da5 */
+code span.an { color: #959da5; font-style: italic; } /* Annotation */
+code span.cv { color: #959da5; font-style: italic; } /* CommentVar */
+
+/* Alerts & Errors - GitHub dark: #d73a49 */
+code span.al { color: #d73a49; } /* Alert */
+code span.er { color: #d73a49; } /* Error */
+
+/* Warnings - GitHub dark: #fb8532 */
+code span.wa { color: #fb8532; font-style: italic; } /* Warning */
+
+/* Information - GitHub dark: #959da5 */
+code span.in { color: #959da5; font-style: italic; } /* Information */
+
+/* Other - GitHub dark: #ea4a5a */
+code span.ot { color: #ea4a5a; } /* Other */
+
+/* Extension - default foreground */
+code span.ex { color: #f6f8fa; } /* Extension */

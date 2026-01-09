@@ -1,7 +1,7 @@
 # GitHub-Style Markdown to HTML Converter - Project Context
 
 ## Project Overview
-This project converts Markdown files to self-contained HTML with GitHub's exact light theme styling using Pandoc. HTML is preferred over PDF for better interactivity, searchability, and portability.
+This project converts Markdown files to self-contained HTML with GitHub theme styling (light or dark) using Pandoc. HTML is preferred over PDF for better interactivity, searchability, and portability.
 
 ## What We Built
 
@@ -19,7 +19,9 @@ Both scripts automatically find their resources and can be called from any direc
 1. `md2html/md2html.py` - Conversion script (persistent HTML)
 2. `mdread.sh` - Preview script (temporary HTML)
 3. `md2html/github-markdown-light.css` - GitHub's official light theme CSS
-4. `md2html/syntax-highlighting.css` - Syntax highlighting CSS
+4. `md2html/github-markdown-dark.css` - GitHub's official dark theme CSS
+5. `md2html/github-syntax-highlighting-light-pandoc.css` - Light theme syntax highlighting
+6. `md2html/github-syntax-highlighting-dark-pandoc.css` - Dark theme syntax highlighting
 
 **Usage**:
 ```bash
@@ -48,6 +50,10 @@ Python-based conversion script that:
 - Supports batch processing of multiple files
 - Uses Pandoc with `--standalone` and `--embed-resources` flags
 - Embeds both GitHub styling and syntax highlighting CSS
+- Easy theme switching via constants at top of file:
+  - `SELECTED_THEME` - Choose between `GITHUB_LIGHT` or `GITHUB_DARK`
+  - `SELECTED_SYNTAX_HIGHLIGHTING_THEME` - Choose between `SYNTAX_LIGHT` or `GITHUB_SYNTAX_DARK`
+- Background color automatically adjusts to match selected theme
 
 ### mdread.sh
 Preview script that creates temporary HTML files for quick viewing in browser:
@@ -75,14 +81,23 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 
 3. **Layout**: GitHub's 980px max-width centered layout with responsive padding
 
-4. **CSS Source**: Using official `github-markdown-light.css` from sindresorhus/github-markdown-css
+4. **CSS Source**: Using official GitHub CSS files:
+   - Light theme: `github-markdown-light.css` from sindresorhus/github-markdown-css
+   - Dark theme: `github-markdown-dark.css` from sindresorhus/github-markdown-css
 
-5. **Syntax Highlighting**: Using separate `syntax-highlighting.css` file:
+5. **Syntax Highlighting**: Using separate syntax highlighting CSS files:
+   - Light theme: `github-syntax-highlighting-light-pandoc.css`
+   - Dark theme: `github-syntax-highlighting-dark-pandoc.css`
    - Embedded directly in HTML template
    - Supports all major programming languages
    - Consistent styling across all converted documents
 
-6. **Two-Script Approach**:
+6. **Theme Selection**: Easy switching via constants at top of `md2html.py`:
+   - Change `SELECTED_THEME` to switch between light/dark
+   - Change `SELECTED_SYNTAX_HIGHLIGHTING_THEME` for code highlighting
+   - Background color automatically adjusts to match theme
+
+7. **Two-Script Approach**:
    - **md2html**: For creating persistent HTML files to share or archive
    - **mdread**: For quick read-only viewing without risk of accidental edits or file clutter
    - Temporary files cleaned up automatically (3-second delay for browser loading)
@@ -93,17 +108,21 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 - **Python 3**: Script runtime (built-in on macOS)
 - **pandoc**: Universal document converter (Homebrew)
 - **github-markdown-light.css**: GitHub's light theme CSS
-- **syntax-highlighting.css**: Code syntax highlighting CSS
+- **github-markdown-dark.css**: GitHub's dark theme CSS
+- **github-syntax-highlighting-light-pandoc.css**: Light theme code syntax highlighting
+- **github-syntax-highlighting-dark-pandoc.css**: Dark theme code syntax highlighting
 
 ## Directory Structure
 ```
 ~/dotfiles/scripts/mdread/
 ├── md2html/
-│   ├── md2html.py                # Python conversion script (persistent HTML)
-│   ├── github-markdown-light.css # GitHub light theme CSS
-│   └── syntax-highlighting.css   # Syntax highlighting CSS
-├── mdread.sh                     # Preview script (temporary HTML)
-└── README.md                     # Documentation
+│   ├── md2html.py                                        # Python conversion script (persistent HTML)
+│   ├── github-markdown-light.css                         # GitHub light theme CSS
+│   ├── github-markdown-dark.css                          # GitHub dark theme CSS
+│   ├── github-syntax-highlighting-light-pandoc.css       # Light theme syntax highlighting
+│   └── github-syntax-highlighting-dark-pandoc.css        # Dark theme syntax highlighting
+├── mdread.sh                                             # Preview script (temporary HTML)
+└── README.md                                             # Documentation
 ```
 
 The `md2html.py` script can be called from any directory - it locates the CSS files relative to its own location.

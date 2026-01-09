@@ -9,6 +9,13 @@ from pathlib import Path
 GITHUB_LIGHT = "github-markdown-light.css"
 GITHUB_DARK = "github-markdown-dark.css"
 
+# Syntax highlighting constants
+SYNTAX_LIGHT = "github-syntax-highlighting-light-pandoc.css"
+GITHUB_SYNTAX_DARK = "github-syntax-highlighting-dark-pandoc.css"
+
+# Selected themes (easy to change)
+SELECTED_THEME = GITHUB_DARK 
+SELECTED_SYNTAX_HIGHLIGHTING_THEME = GITHUB_SYNTAX_DARK
 
 def get_script_dir() -> Path:
     """Get the directory containing this script."""
@@ -33,8 +40,11 @@ def convert_md_to_html(md_path: Path) -> None:
     output_path = md_path.with_suffix(".html")
 
     # Read CSS files
-    github_css = read_css_file(GITHUB_DARK)
-    syntax_css = read_css_file("syntax-highlighting.css")
+    github_css = read_css_file(SELECTED_THEME)
+    syntax_css = read_css_file(SELECTED_SYNTAX_HIGHLIGHTING_THEME)
+
+    # Set background color based on theme
+    bg_color = "#0d1117" if SELECTED_THEME == GITHUB_DARK else "#ffffff"
 
     # HTML template with embedded CSS
     html_template = f"""<!DOCTYPE html>
@@ -51,7 +61,7 @@ def convert_md_to_html(md_path: Path) -> None:
         html, body {{
             margin: 0;
             padding: 0;
-            background-color: #0d1117;
+            background-color: {bg_color};
         }}
         .container {{
             box-sizing: border-box;

@@ -1,15 +1,16 @@
 # GitHub-Style Markdown to HTML Converter
 
-Convert Markdown files to self-contained HTML with GitHub's light theme styling using Pandoc.
+Convert Markdown files to self-contained HTML with GitHub theme styling using Pandoc.
 
 ## Features
 
-- GitHub's exact light theme CSS
+- GitHub's exact theme CSS (light and dark themes available)
 - Syntax highlighting for code blocks
 - Self-contained HTML files (all resources embedded)
 - Two modes:
   - **md2html**: Create persistent HTML files (batch processing supported)
   - **mdread**: Quick browser preview with no leftovers
+- Easy theme switching via constants at top of script
 - Preserves filenames (`input.md` → `input.html`)
 - Responsive layout with 980px max-width
 
@@ -26,15 +27,17 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
    ```bash
    ~/dotfiles/scripts/mdread/
    ├── md2html/
-   │   ├── md2html.sh
-   │   ├── template.html
-   │   └── github-markdown-light.css
+   │   ├── md2html.py
+   │   ├── github-markdown-light.css
+   │   ├── github-markdown-dark.css
+   │   ├── github-syntax-highlighting-light-pandoc.css
+   │   └── github-syntax-highlighting-dark-pandoc.css
    └── mdread.sh
    ```
 
 2. **Make the scripts executable**:
    ```bash
-   chmod +x ~/dotfiles/scripts/mdread/md2html/md2html.sh
+   chmod +x ~/dotfiles/scripts/mdread/md2html/md2html.py
    chmod +x ~/dotfiles/scripts/mdread/mdread.sh
    ```
 
@@ -42,7 +45,7 @@ Convert Markdown files to self-contained HTML with GitHub's light theme styling 
 
    Add to your `~/.zshrc`:
    ```bash
-   alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.sh'
+   alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.py'
    alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
    ```
 
@@ -68,8 +71,8 @@ md2html *.md
 
 **Without alias:**
 ```bash
-~/dotfiles/scripts/mdread/md2html/md2html.sh document.md
-~/dotfiles/scripts/mdread/md2html/md2html.sh *.md
+~/dotfiles/scripts/mdread/md2html/md2html.py document.md
+~/dotfiles/scripts/mdread/md2html/md2html.py *.md
 ```
 
 ### Quick preview in browser (mdread)
@@ -93,16 +96,30 @@ Temp HTML files are created in `/tmp/` and automatically cleaned up after 3 seco
 
 ## Files
 
-- `md2html/md2html.sh` - Conversion script (creates persistent HTML files)
+- `md2html/md2html.py` - Python conversion script (creates persistent HTML files)
 - `mdread.sh` - Preview script (temporary HTML, opens in browser)
-- `md2html/template.html` - HTML template with GitHub layout
 - `md2html/github-markdown-light.css` - GitHub's light theme CSS
+- `md2html/github-markdown-dark.css` - GitHub's dark theme CSS
+- `md2html/github-syntax-highlighting-light-pandoc.css` - Light theme syntax highlighting
+- `md2html/github-syntax-highlighting-dark-pandoc.css` - Dark theme syntax highlighting
+
+## Theme Selection
+
+To switch between light and dark themes, edit `md2html.py` and change the constants at the top:
+
+```python
+# Selected themes (easy to change)
+SELECTED_THEME = GITHUB_DARK  # or GITHUB_LIGHT
+SELECTED_SYNTAX_HIGHLIGHTING_THEME = GITHUB_SYNTAX_DARK  # or SYNTAX_LIGHT
+```
+
+The background color automatically adjusts to match the selected theme.
 
 ## Output
 
 Generated HTML files are:
 - Self-contained (single file, no dependencies)
-- Fully styled with GitHub's light theme
+- Fully styled with GitHub theme (light or dark)
 - Code blocks with syntax highlighting
 - Responsive and mobile-friendly
 - Searchable and interactive
