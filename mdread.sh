@@ -5,11 +5,7 @@
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Paths to template and CSS files
-TEMPLATE="$SCRIPT_DIR/md2html/template.html"
-CSS="$SCRIPT_DIR/md2html/github-markdown-light.css"
-SYNTAX_CSS="$SCRIPT_DIR/md2html/syntax-highlighting.css"
+MD2HTML="$SCRIPT_DIR/md2html/md2html.py"
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <markdown-file> [<markdown-file> ...]"
@@ -27,31 +23,25 @@ for md_file in "$@"; do
         continue
     fi
 
-    # Create a temporary HTML file
+    # Create temporary markdown file in /tmp
     temp_base=$(mktemp /tmp/mdread.XXXXXX)
+    temp_md="${temp_base}.md"
     temp_html="${temp_base}.html"
-    mv "$temp_base" "$temp_html"
-    temp_files+=("$temp_html")
+    mv "$temp_base" "$temp_md"
 
-    # Extract title from filename
-    title=$(basename "${md_file%.md}")
+    # Copy markdown content to temp file
+    cp "$md_file" "$temp_md"
 
-    # Convert markdown to HTML
-    pandoc "$md_file" -o "$temp_html" \
-        --template="$TEMPLATE" \
-        --embed-resources \
-        --standalone \
-        --css="$CSS" \
-        --css="$SYNTAX_CSS" \
-        --metadata title="$title" \
-        --syntax-highlighting=pygments 2>/dev/null
+    # Convert using md2html.py
+    "$MD2HTML" "$temp_md" > /dev/null 2>&1
 
-    if [ $? -eq 0 ]; then
+    if [ -f "$temp_html" ]; then
         # Open in default browser
         open "$temp_html"
+        temp_files+=("$temp_md" "$temp_html")
     else
         echo "✗ Failed to convert $md_file"
-        rm -f "$temp_html"
+        rm -f "$temp_md"
     fi
 done
 
