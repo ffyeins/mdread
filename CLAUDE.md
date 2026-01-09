@@ -16,10 +16,10 @@ Both scripts automatically find their resources and can be called from any direc
 **Installation Location**: `~/dotfiles/scripts/mdread/`
 
 **Files Required**:
-1. `md2html/md2html.sh` - Conversion script (persistent HTML)
+1. `md2html/md2html.py` - Conversion script (persistent HTML)
 2. `mdread.sh` - Preview script (temporary HTML)
 3. `md2html/github-markdown-light.css` - GitHub's official light theme CSS
-4. `md2html/template.html` - HTML wrapper with proper layout
+4. `md2html/syntax-highlighting.css` - Syntax highlighting CSS
 
 **Usage**:
 ```bash
@@ -32,60 +32,22 @@ mdread document.md
 mdread file1.md file2.md *.md
 
 # Direct calls
-~/dotfiles/scripts/mdread/md2html/md2html.sh document.md
+~/dotfiles/scripts/mdread/md2html/md2html.py document.md
 ~/dotfiles/scripts/mdread/mdread.sh document.md
 ```
 
-The `md2html.sh` script uses `SCRIPT_DIR` to locate template and CSS files in the same directory, allowing it to be called from anywhere.
+The `md2html.py` script locates CSS files relative to its own location, allowing it to be called from any directory.
 
 ## File Contents
 
-### template.html
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$if(title)$$title$$else$Document$endif$</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #ffffff;
-    }
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 45px;
-    }
-    @media (max-width: 767px) {
-      .container {
-        padding: 15px;
-      }
-    }
-  </style>
-$if(highlighting-css)$
-  <style>
-$highlighting-css$
-  </style>
-$endif$
-  $for(css)$
-  <link rel="stylesheet" href="$css$">
-  $endfor$
-</head>
-<body>
-  <div class="container">
-    <article class="markdown-body">
-      $body$
-    </article>
-  </div>
-</body>
-</html>
-```
-
-### md2html.sh
-The script uses `--syntax-highlighting=pygments` to enable Pandoc's built-in syntax highlighting. The `$highlighting-css$` variable in the template allows Pandoc to inject the necessary CSS for syntax highlighting. Supports batch processing of multiple files.
+### md2html.py
+Python-based conversion script that:
+- Embeds HTML template directly in the code (no separate template file needed)
+- Reads CSS files from its own directory using `Path(__file__).parent`
+- Creates a temporary `.template.html` file during conversion and cleans it up afterward
+- Supports batch processing of multiple files
+- Uses Pandoc with `--standalone` and `--embed-resources` flags
+- Embeds both GitHub styling and syntax highlighting CSS
 
 ### mdread.sh
 Preview script that creates temporary HTML files for quick viewing in browser:
@@ -115,10 +77,10 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 
 4. **CSS Source**: Using official `github-markdown-light.css` from sindresorhus/github-markdown-css
 
-5. **Syntax Highlighting**: Using Pandoc's built-in highlighting with `--syntax-highlighting=pygments`:
+5. **Syntax Highlighting**: Using separate `syntax-highlighting.css` file:
+   - Embedded directly in HTML template
    - Supports all major programming languages
-   - CSS automatically embedded via `$highlighting-css$` template variable
-   - Alternative styles available: pygments, tango, kate, monochrome, breezedark, espresso, zenburn, haddock
+   - Consistent styling across all converted documents
 
 6. **Two-Script Approach**:
    - **md2html**: For creating persistent HTML files to share or archive
@@ -128,29 +90,32 @@ Preview script that creates temporary HTML files for quick viewing in browser:
 ## Dependencies
 
 ### Required
+- **Python 3**: Script runtime (built-in on macOS)
 - **pandoc**: Universal document converter (Homebrew)
 - **github-markdown-light.css**: GitHub's light theme CSS
+- **syntax-highlighting.css**: Code syntax highlighting CSS
 
 ## Directory Structure
 ```
 ~/dotfiles/scripts/mdread/
 ├── md2html/
-│   ├── md2html.sh               # Conversion script (persistent HTML)
+│   ├── md2html.py                # Python conversion script (persistent HTML)
 │   ├── github-markdown-light.css # GitHub light theme CSS
-│   └── template.html            # HTML template with layout
-├── mdread.sh                    # Preview script (temporary HTML)
-└── README.md                    # Documentation
+│   └── syntax-highlighting.css   # Syntax highlighting CSS
+├── mdread.sh                     # Preview script (temporary HTML)
+└── README.md                     # Documentation
 ```
 
-The `md2html.sh` script can be called from any directory - it locates the template and CSS files relative to its own location.
+The `md2html.py` script can be called from any directory - it locates the CSS files relative to its own location.
 
 ## Installation Paths (macOS)
 
 - **Script location**: `~/dotfiles/scripts/mdread/`
+- **Python 3**: Built-in on macOS
 - **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
 - **Aliases**: Add to `~/.zshrc`:
   ```bash
-  alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.sh'
+  alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.py'
   alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
   ```
 
