@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: mdread <file.md> [file2.md ...]
+
+Convert markdown files to GitHub dark-themed HTML and open in the browser.
+EOF
+  exit 1
+}
+
+if [[ $# -eq 0 ]]; then
+  usage
+fi
+
+if ! command -v pandoc &>/dev/null; then
+  echo "Error: pandoc is not installed. Install with: brew install pandoc" >&2
+  exit 1
+fi
+
+read -r -d '' CSS <<'CSSEOF' || true
+body {
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #e6edf3;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+h1 {
+  font-size: 2em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #30363d;
+}
+h2 {
+  font-size: 1.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #30363d;
+}
+h3 { font-size: 1.25em; }
+h4 { font-size: 1em; }
+p { margin-top: 0; margin-bottom: 16px; }
+code {
+  background: #161b22;
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-size: 85%;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+pre {
+  background: #161b22;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  line-height: 1.45;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 85%;
+}
+blockquote {
+  margin: 0 0 16px 0;
+  padding: 0 1em;
+  color: #8b949e;
+  border-left: 0.25em solid #30363d;
+}
+hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #30363d;
+  border: 0;
+}
+ul, ol {
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-left: 2em;
+}
+li + li { margin-top: 0.25em; }
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  width: auto;
+}
+table th, table td {
+  padding: 6px 13px;
+  border: 1px solid #30363d;
+}
+table th {
+  font-weight: 600;
+  background: #161b22;
+}
+table tr:nth-child(2n) {
+  background: #161b22;
+}
+img { max-width: 100%; }
+input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+code span.al { color: #e5534b; font-weight: bold; }
+code span.an { color: #8b949e; }
+code span.at { color: #79c0ff; }
+code span.bn { color: #79c0ff; }
+code span.bu { color: #ffa657; }
+code span.cf { color: #ff7b72; }
+code span.ch { color: #a5d6ff; }
+code span.cn { color: #79c0ff; }
+code span.co { color: #8b949e; }
+code span.cv { color: #8b949e; }
+code span.do { color: #8b949e; }
+code span.dt { color: #ff7b72; }
+code span.dv { color: #79c0ff; }
+code span.er { color: #e5534b; }
+code span.ex { color: #d2a8ff; }
+code span.fl { color: #79c0ff; }
+code span.fu { color: #d2a8ff; }
+code span.im { color: #ffa657; }
+code span.in { color: #8b949e; }
+code span.kw { color: #ff7b72; }
+code span.op { color: #ff7b72; }
+code span.ot { color: #79c0ff; }
+code span.pp { color: #ff7b72; }
+code span.re { color: #79c0ff; }
+code span.sc { color: #a5d6ff; }
+code span.ss { color: #a5d6ff; }
+code span.st { color: #a5d6ff; }
+code span.va { color: #ffa657; }
+code span.vs { color: #a5d6ff; }
+code span.wa { color: #e5534b; }
+CSSEOF
+
+tmpfiles=()
+converted=0
+
+for file in "$@"; do
+  if [[ ! -f "$file" || ! -r "$file" ]]; then
+    echo "Warning: cannot read '$file', skipping" >&2
+    continue
+  fi
+
+  tmp=$(mktemp /tmp/mdread.XXXXXX)
+  tmphtml="${tmp}.html"
+  mv "$tmp" "$tmphtml"
+
+  body=$(pandoc -f gfm -t html5 --syntax-highlighting=breezedark "$file")
+
+  filename=$(basename "$file")
+
+  cat > "$tmphtml" <<HTMLEOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${filename}</title>
+<style>
+${CSS}
+</style>
+</head>
+<body>
+<div class="markdown-body">
+${body}
+</div>
+</body>
+</html>
+HTMLEOF
+
+  tmpfiles+=("$tmphtml")
+  ((converted++))
+done
+
+if [[ $converted -eq 0 ]]; then
+  echo "Error: no files were converted" >&2
+  exit 1
+fi
+
+open "${tmpfiles[@]}"
+(sleep 3 && rm -f "${tmpfiles[@]}") & disown
