@@ -1,153 +1,27 @@
-# GitHub-Style Markdown to HTML Converter - Project Context
+# mdread
 
-## Project Overview
-This project converts Markdown files to self-contained HTML with GitHub theme styling (light or dark) using Pandoc. HTML is preferred over PDF for better interactivity, searchability, and portability.
+A single bash script that converts markdown files to GitHub dark-themed HTML and opens them in the default browser. macOS only.
 
-## What We Built
+## Project Structure
 
-### Markdown to HTML Pipeline
-Created two command-line scripts for working with markdown and HTML:
+- `mdread` — the entire tool, a self-contained bash script
 
-1. **md2html**: Converts markdown to persistent HTML files with GitHub styling
-2. **mdread**: Quick preview of markdown in browser (temporary files, no leftovers)
+## How It Works
 
-Both scripts automatically find their resources and can be called from any directory.
-
-**Installation Location**: `~/dotfiles/scripts/mdread/`
-
-**Files Required**:
-1. `md2html/md2html.py` - Conversion script (persistent HTML)
-2. `mdread.sh` - Preview script (temporary HTML)
-3. `md2html/github-markdown-light.css` - GitHub's official light theme CSS
-4. `md2html/github-markdown-dark.css` - GitHub's official dark theme CSS
-5. `md2html/github-syntax-highlighting-light-pandoc.css` - Light theme syntax highlighting
-6. `md2html/github-syntax-highlighting-dark-pandoc.css` - Dark theme syntax highlighting
-
-**Usage**:
-```bash
-# Convert to HTML file (via alias)
-md2html document.md
-md2html file1.md file2.md *.md
-
-# Quick preview in browser (via alias)
-mdread document.md
-mdread file1.md file2.md *.md
-
-# Direct calls
-~/dotfiles/scripts/mdread/md2html/md2html.py document.md
-~/dotfiles/scripts/mdread/mdread.sh document.md
-```
-
-The `md2html.py` script locates CSS files relative to its own location, allowing it to be called from any directory.
-
-## File Contents
-
-### md2html.py
-Python-based conversion script that:
-- Embeds HTML template directly in the code (no separate template file needed)
-- Reads CSS files from its own directory using `Path(__file__).parent`
-- Creates a temporary `.template.html` file during conversion and cleans it up afterward
-- Supports batch processing of multiple files
-- Uses Pandoc with `--standalone` and `--embed-resources` flags
-- Embeds both GitHub styling and syntax highlighting CSS
-- Easy theme switching via constants at top of file:
-  - `SELECTED_THEME` - Choose between `GITHUB_LIGHT` or `GITHUB_DARK`
-  - `SELECTED_SYNTAX_HIGHLIGHTING_THEME` - Choose between `SYNTAX_LIGHT` or `GITHUB_SYNTAX_DARK`
-- Background color automatically adjusts to match selected theme
-
-### mdread.sh
-Preview script that creates temporary HTML files for quick viewing in browser:
-- Uses `mktemp` to create temp files in `/tmp/` (e.g., `/tmp/mdread.abc123.html`)
-- Supports multiple files (opens each in a new browser tab)
-- Opens HTML in default browser using `open` command
-- Cleans up all temp files after 3 seconds (background process)
-- No persistent files or leftovers
-- Useful for read-only viewing without accidental edits
-
-## Key Design Decisions
-
-1. **HTML over PDF**: Chose HTML for distribution because:
-   - Better interactivity (clickable links always work)
-   - Searchable with Ctrl+F
-   - Easy code copying without formatting issues
-   - Smaller file sizes
-   - No pagination/page breaks
-   - Works on any device with a browser
-
-2. **Self-contained HTML**: Using `--embed-resources --standalone`:
-   - Single file with all CSS and images embedded
-   - No external dependencies
-   - Easy to share via email or cloud storage
-
-3. **Layout**: GitHub's 980px max-width centered layout with responsive padding
-
-4. **CSS Source**: Using official GitHub CSS files:
-   - Light theme: `github-markdown-light.css` from sindresorhus/github-markdown-css
-   - Dark theme: `github-markdown-dark.css` from sindresorhus/github-markdown-css
-
-5. **Syntax Highlighting**: Using separate syntax highlighting CSS files:
-   - Light theme: `github-syntax-highlighting-light-pandoc.css`
-   - Dark theme: `github-syntax-highlighting-dark-pandoc.css`
-   - Embedded directly in HTML template
-   - Supports all major programming languages
-   - Consistent styling across all converted documents
-
-6. **Theme Selection**: Easy switching via constants at top of `md2html.py`:
-   - Change `SELECTED_THEME` to switch between light/dark
-   - Change `SELECTED_SYNTAX_HIGHLIGHTING_THEME` for code highlighting
-   - Background color automatically adjusts to match theme
-
-7. **Two-Script Approach**:
-   - **md2html**: For creating persistent HTML files to share or archive
-   - **mdread**: For quick read-only viewing without risk of accidental edits or file clutter
-   - Temporary files cleaned up automatically (3-second delay for browser loading)
+1. Converts markdown to HTML using `pandoc -f gfm -t html5`
+2. Wraps the output in an HTML template with inline GitHub dark theme CSS
+3. Writes to a temp file in `/tmp/mdread.XXXXXX.html`
+4. Opens all files with `open` (macOS)
+5. Background cleanup removes temp files after 3 seconds
 
 ## Dependencies
 
-### Required
-- **Python 3**: Script runtime (built-in on macOS)
-- **pandoc**: Universal document converter (Homebrew)
-- **github-markdown-light.css**: GitHub's light theme CSS
-- **github-markdown-dark.css**: GitHub's dark theme CSS
-- **github-syntax-highlighting-light-pandoc.css**: Light theme code syntax highlighting
-- **github-syntax-highlighting-dark-pandoc.css**: Dark theme code syntax highlighting
+- `pandoc` (installed via Homebrew)
+- macOS `open` command
 
-## Directory Structure
-```
-~/dotfiles/scripts/mdread/
-├── md2html/
-│   ├── md2html.py                                        # Python conversion script (persistent HTML)
-│   ├── github-markdown-light.css                         # GitHub light theme CSS
-│   ├── github-markdown-dark.css                          # GitHub dark theme CSS
-│   ├── github-syntax-highlighting-light-pandoc.css       # Light theme syntax highlighting
-│   └── github-syntax-highlighting-dark-pandoc.css        # Dark theme syntax highlighting
-├── mdread.sh                                             # Preview script (temporary HTML)
-└── README.md                                             # Documentation
-```
+## Key Details
 
-The `md2html.py` script can be called from any directory - it locates the CSS files relative to its own location.
-
-## Installation Paths (macOS)
-
-- **Script location**: `~/dotfiles/scripts/mdread/`
-- **Python 3**: Built-in on macOS
-- **Pandoc**: Installed via Homebrew at `/opt/homebrew/bin/pandoc`
-- **Aliases**: Add to `~/.zshrc`:
-  ```bash
-  alias md2html='~/dotfiles/scripts/mdread/md2html/md2html.py'
-  alias mdread='~/dotfiles/scripts/mdread/mdread.sh'
-  ```
-
-## User Preferences
-
-- macOS user (MacBook Air)
-- Prefers command-line tools
-- Senior developer, values concise technical explanations
-- Uses dotfiles structure for scripts
-
-## Resources
-
-- GitHub Markdown CSS: https://github.com/sindresorhus/github-markdown-css
-- Pandoc Manual: https://pandoc.org/MANUAL.html
-- WeasyPrint Docs: https://doc.courtbouillon.org/weasyprint/
-
+- Uses GFM (GitHub Flavored Markdown) mode for tables, task lists, fenced code blocks
+- Syntax highlighting uses pandoc's `breezedark` tokenizer with custom CSS colors matching GitHub's dark theme
+- Not using `--standalone` — we provide our own HTML wrapper
+- Temp file creation uses `mktemp` + rename to add `.html` extension (macOS `mktemp` only replaces trailing Xs)
