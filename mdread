@@ -189,7 +189,7 @@ ${body}
 HTMLEOF
 
   tmpfiles+=("$tmphtml")
-  ((converted++))
+  ((++converted))
 done
 
 if [[ $converted -eq 0 ]]; then
