@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+VERSION="2.1.0"
+
 usage() {
   cat <<'EOF'
 Usage: mdread <file.md> [file2.md ...]
@@ -14,11 +16,19 @@ if [[ $# -eq 0 ]]; then
   usage
 fi
 
+# Only check first arg for flags — files named --help won't conflict
+case "${1:-}" in
+  --help|-h) usage ;;
+  --version|-v) echo "mdread $VERSION"; exit 0 ;;
+esac
+
 if ! command -v pandoc &>/dev/null; then
   echo "Error: pandoc is not installed. Install with: brew install pandoc" >&2
   exit 1
 fi
 
+# GitHub dark theme CSS — colors from github.com's dark mode
+# || true because `read` returns 1 when it hits the delimiter instead of EOF
 read -r -d '' CSS <<'CSSEOF' || true
 body {
   background: #0d1117;
@@ -120,6 +130,7 @@ img { max-width: 100%; }
 input[type="checkbox"] {
   margin-right: 0.5em;
 }
+/* Syntax highlighting — pandoc breezedark token classes, colors matched to GitHub dark */
 code span.al { color: #e5534b; font-weight: bold; }
 code span.an { color: #8b949e; }
 code span.at { color: #79c0ff; }
@@ -150,10 +161,66 @@ code span.st { color: #a5d6ff; }
 code span.va { color: #ffa657; }
 code span.vs { color: #a5d6ff; }
 code span.wa { color: #e5534b; }
+/* GitHub-style alerts: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
+   Pandoc 3.9+ outputs these as <div class="note"> etc. */
+.note, .tip, .important, .warning, .caution {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-left: 0.25em solid;
+  border-radius: 6px;
+}
+.note { border-color: #58a6ff; }
+.tip { border-color: #3fb950; }
+.important { border-color: #a371f7; }
+.warning { border-color: #d29922; }
+.caution { border-color: #f85149; }
+.note > .title, .tip > .title, .important > .title, .warning > .title, .caution > .title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.note > .title p { color: #58a6ff; }
+.tip > .title p { color: #3fb950; }
+.important > .title p { color: #a371f7; }
+.warning > .title p { color: #d29922; }
+.caution > .title p { color: #f85149; }
+section.footnotes {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #30363d;
+  font-size: 0.875em;
+  color: #8b949e;
+}
+section.footnotes ol { padding-left: 1.5em; }
+a.footnote-ref { text-decoration: none; }
+a.footnote-back { text-decoration: none; color: #58a6ff; margin-left: 4px; }
+/* Pandoc wraps task lists in <ul class="task-list"> with checkboxes inside <label> */
+ul.task-list {
+  list-style: none;
+  padding-left: 1.2em;
+}
+details {
+  margin-bottom: 16px;
+}
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #e6edf3;
+  padding: 8px 0;
+}
+details summary:hover {
+  color: #58a6ff;
+}
+.math.display {
+  overflow-x: auto;
+  margin: 16px 0;
+}
 CSSEOF
 
+# Track temp files for cleanup; trap ensures they're removed on early exit or error
 tmpfiles=()
 converted=0
+cleanup() { rm -f "${tmpfiles[@]}"; }
+trap cleanup EXIT
 
 for file in "$@"; do
   if [[ ! -f "$file" || ! -r "$file" ]]; then
@@ -161,13 +228,44 @@ for file in "$@"; do
     continue
   fi
 
+  # macOS mktemp only replaces trailing Xs, so we create then rename to add .html
   tmp=$(mktemp /tmp/mdread.XXXXXX)
   tmphtml="${tmp}.html"
   mv "$tmp" "$tmphtml"
 
-  body=$(pandoc -f gfm -t html5 --syntax-highlighting=breezedark "$file")
+  # --mathjax wraps math in \( \) delimiters for MathJax; -- prevents filename-as-flag
+  if ! body=$(pandoc -f gfm -t html5 --mathjax --syntax-highlighting=breezedark -- "$file"); then
+    echo "Warning: pandoc failed on '$file', skipping" >&2
+    rm -f "$tmphtml"
+    continue
+  fi
 
+  # Escape &, <, > for safe use in <title> tag
   filename=$(basename "$file")
+  safe_title="${filename//&/&amp;}"
+  safe_title="${safe_title//</&lt;}"
+  safe_title="${safe_title//>/&gt;}"
+
+  # Only load CDN scripts when the content actually needs them
+  scripts=""
+  if [[ "$body" == *'class="mermaid"'* ]]; then
+    # Pandoc outputs <pre class="mermaid"><code>...</code></pre> but mermaid.js
+    # expects raw text directly in the element — unwrap <code> before init
+    scripts+='<script>
+  document.querySelectorAll("pre.mermaid").forEach(function(pre) {
+    var code = pre.querySelector("code");
+    if (code) { pre.textContent = code.textContent; }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: "dark"});</script>
+'
+  fi
+  if [[ "$body" == *'class="math '* ]]; then
+    # Matches both class="math inline" and class="math display"
+    scripts+='<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+'
+  fi
 
   cat > "$tmphtml" <<HTMLEOF
 <!DOCTYPE html>
@@ -175,7 +273,7 @@ for file in "$@"; do
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${filename}</title>
+<title>${safe_title}</title>
 <style>
 ${CSS}
 </style>
@@ -184,7 +282,7 @@ ${CSS}
 <div class="markdown-body">
 ${body}
 </div>
-</body>
+${scripts}</body>
 </html>
 HTMLEOF
 
@@ -197,5 +295,12 @@ if [[ $converted -eq 0 ]]; then
   exit 1
 fi
 
-open "${tmpfiles[@]}"
-(sleep 3 && rm -f "${tmpfiles[@]}") & disown
+# Open files one at a time to avoid flooding the browser with tabs
+for f in "${tmpfiles[@]}"; do
+  open "$f"
+done
+
+# Disarm the EXIT trap (files are now open), then schedule background cleanup.
+# 10 seconds gives the browser time to read the files before they're deleted.
+trap - EXIT
+(sleep 10 && rm -f "${tmpfiles[@]}") & disown
