@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="4.0.0"
+VERSION="1.0.0"
 
 usage() {
   cat <<'EOF'
-Usage: mdread <file.md> [file2.md ...]
+Usage: mdtohtml <file.md> [file2.md ...]
 
-Convert markdown files to GitHub-style HTML and open in the browser.
+Convert markdown files to GitHub-style HTML files.
+Each input file produces a .html file in the same directory.
 Uses cmark-gfm for local rendering — no internet required for conversion.
 CSS and syntax highlighting loaded from CDN when available.
 Install dependency: brew install cmark-gfm
@@ -20,7 +21,7 @@ if [[ $# -eq 0 ]]; then usage; fi
 # Only check first arg for flags — files named --help won't conflict
 case "${1:-}" in
   --help|-h) usage ;;
-  --version|-v) echo "mdread $VERSION"; exit 0 ;;
+  --version|-v) echo "mdtohtml $VERSION"; exit 0 ;;
 esac
 
 if ! command -v cmark-gfm &>/dev/null; then
@@ -28,11 +29,7 @@ if ! command -v cmark-gfm &>/dev/null; then
   exit 1
 fi
 
-# Track temp files for cleanup; trap ensures they're removed on early exit or error
-tmpfiles=()
 converted=0
-cleanup() { [[ ${#tmpfiles[@]} -gt 0 ]] && rm -f "${tmpfiles[@]}"; }
-trap cleanup EXIT
 
 for file in "$@"; do
   if [[ ! -f "$file" || ! -r "$file" ]]; then
@@ -43,10 +40,8 @@ for file in "$@"; do
   # Render markdown to HTML locally with all GFM extensions
   body=$(cmark-gfm -e table -e autolink -e tagfilter -e strikethrough -e tasklist -e footnotes --unsafe < "$file")
 
-  # macOS mktemp only replaces trailing Xs, so we create then rename to add .html
-  tmp=$(mktemp /tmp/mdread.XXXXXX)
-  tmphtml="${tmp}.html"
-  mv "$tmp" "$tmphtml"
+  # Output file: replace .md extension with .html (or append .html)
+  outfile="${file%.md}.html"
 
   # Escape &, <, > for safe use in <title> tag
   filename=$(basename "$file")
@@ -263,9 +258,9 @@ document.querySelectorAll("pre").forEach(function(pre) {
 SCRIPTS
     printf '%s\n' "$scripts"
     printf '%s\n' "</body>" "</html>"
-  } > "$tmphtml"
+  } > "$outfile"
 
-  tmpfiles+=("$tmphtml")
+  echo "$outfile"
   ((++converted))
 done
 
@@ -273,13 +268,3 @@ if [[ $converted -eq 0 ]]; then
   echo "Error: no files were converted" >&2
   exit 1
 fi
-
-# Open files one at a time to avoid flooding the browser with tabs
-for f in "${tmpfiles[@]}"; do
-  open "$f"
-done
-
-# Disarm the EXIT trap (files are now open), then schedule background cleanup.
-# 10 seconds gives the browser time to read the files before they're deleted.
-trap - EXIT
-(sleep 10 && rm -f "${tmpfiles[@]}") & disown
