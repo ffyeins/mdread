@@ -1,14 +1,10 @@
 # mdread
 
-Preview markdown files in the browser with GitHub's dark theme.
+Preview markdown files in the browser — rendered by GitHub's own API, pixel-perfect dark theme.
 
 ## Installation
 
-Requires [pandoc](https://pandoc.org/) >= 3.9:
-
-```bash
-brew install pandoc
-```
+No external dependencies needed (uses `curl`, `jq`/`python3`, and `open` which ship with macOS).
 
 Clone the repo and add it to your PATH:
 
@@ -33,15 +29,24 @@ mdread --version
 
 The HTML is opened in your default browser and automatically cleaned up after a few seconds.
 
+## Authentication
+
+Set `GITHUB_TOKEN` or `GH_TOKEN` to increase API rate limits from 60/hr to 5000/hr:
+
+```bash
+export GITHUB_TOKEN="ghp_..."
+```
+
 ## Supported Features
 
 - Tables, task lists, fenced code blocks, strikethrough
-- Syntax highlighting (GitHub dark color scheme)
+- Syntax highlighting (identical to github.com)
 - Alerts (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!CAUTION]`)
 - Footnotes (`[^1]`)
 - Emoji shortcodes (`:rocket:` → 🚀)
 - LaTeX math (`$inline$` and `$$display$$`) via MathJax
 - Mermaid diagrams (` ```mermaid `) via Mermaid.js
 - Collapsible sections (`<details>` / `<summary>`)
+- Copy-to-clipboard buttons on code blocks
 
-Math and Mermaid rendering require an internet connection (loaded from CDN).
+Requires an internet connection (GitHub API for rendering + CDN for CSS/MathJax/Mermaid).

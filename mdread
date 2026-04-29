@@ -83,15 +83,15 @@ for file in "$@"; do
 
   # Conditional CDN scripts — only load when content needs them
   scripts=""
-  if [[ "$body" == *'language-mermaid'* ]]; then
+  if [[ "$body" == *'highlight-source-mermaid'* ]]; then
     read -r -d '' mermaid_script <<'MERMAIDEOF' || true
 <script>
-document.querySelectorAll("pre code.language-mermaid").forEach(function(code) {
-  var pre = code.parentElement;
-  var container = pre.closest(".highlight") || pre;
+document.querySelectorAll(".highlight-source-mermaid").forEach(function(container) {
+  var pre = container.querySelector("pre");
+  if (!pre) return;
   var div = document.createElement("div");
   div.className = "mermaid";
-  div.textContent = code.textContent;
+  div.textContent = pre.textContent;
   container.parentElement.replaceChild(div, container);
 });
 </script>
