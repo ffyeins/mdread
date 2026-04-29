@@ -1,6 +1,6 @@
 # mdread
 
-A single bash script that converts markdown files to GitHub-rendered HTML and opens them in the default browser. macOS only.
+A single bash script that converts markdown files to GitHub-style HTML and opens them in the default browser. macOS only.
 
 ## Project Structure
 
@@ -8,9 +8,9 @@ A single bash script that converts markdown files to GitHub-rendered HTML and op
 
 ## How It Works
 
-1. Sends markdown content to GitHub's Markdown API (`POST /markdown`) for rendering
-2. Wraps the API response in an HTML template with `github-markdown-css` (dark) from CDN
-3. Includes inline CSS for GitHub's "pretty-lights" syntax highlighting token colors
+1. Renders markdown to HTML locally using `cmark-gfm` with all GFM extensions
+2. Wraps the output in an HTML template with `github-markdown-css` (dark) from CDN
+3. Loads `@wooorm/starry-night` from CDN for syntax highlighting (produces `pl-*` classes matching GitHub)
 4. Conditionally injects MathJax/Mermaid CDN scripts only when content needs them
 5. Adds copy-to-clipboard buttons on code blocks via inline JavaScript
 6. Writes to a temp file in `/tmp/mdread.XXXXXX.html`
@@ -20,27 +20,28 @@ A single bash script that converts markdown files to GitHub-rendered HTML and op
 
 ## Dependencies
 
-- `curl` (ships with macOS)
-- `jq` or `python3` (for JSON encoding — `python3` ships with macOS)
+- `cmark-gfm` (`brew install cmark-gfm`) — GitHub's own markdown parser
 - macOS `open` command
-- Internet connection (GitHub API + CDN for CSS/MathJax/Mermaid)
+- Internet connection only for CDN assets (CSS/JS for styling, syntax highlighting, MathJax, Mermaid)
 
 ## Key Details
 
-- Rendering is pixel-perfect — GitHub's own API produces the HTML, identical to github.com
+- Rendering is done locally via `cmark-gfm` — no API calls, no rate limits, no auth tokens
+- GFM extensions enabled: table, autolink, tagfilter, strikethrough, tasklist, footnotes
+- `--unsafe` flag allows raw HTML passthrough in markdown
 - CSS uses `github-markdown-css` (sindresorhus) dark variant from CDN
-- Syntax highlighting colors use GitHub's "pretty-lights" CSS classes (`pl-k`, `pl-s`, etc.) included inline
-- Auth token via `GITHUB_TOKEN` or `GH_TOKEN` env vars increases rate limit from 60/hr to 5000/hr
-- JSON payload built with `jq -Rs` (preferred) or `python3` fallback
-- HTML assembly uses quoted heredocs (`<<'EOF'`) + `printf '%s'` for variable content to avoid shell expansion of API output
-- Mermaid.js needs code blocks unwrapped from `<pre><code class="language-mermaid">` — done via inline script
+- Syntax highlighting uses `@wooorm/starry-night` (ES module from esm.sh CDN), which uses the same TextMate grammars as GitHub and produces identical `pl-*` CSS classes
+- Inline `pl-*` CSS provides GitHub's "pretty-lights" dark syntax colors
+- GitHub-style alerts (`> [!NOTE]`, `> [!TIP]`, etc.) transformed from blockquotes to styled divs via inline JS
+- Emoji shortcodes (`:rocket:`, `:+1:`, etc.) replaced with unicode emoji via inline JS
+- HTML assembly uses quoted heredocs (`<<'EOF'`) + `printf '%s'` for variable content to avoid shell expansion
+- Mermaid.js code blocks detected by `language-mermaid` class, unwrapped from `<pre><code>` via inline script
 - MathJax loaded conditionally when source file contains `$`, `$$`, or `\(` patterns
-- Per-file error handling: API failures skip the file instead of aborting the whole script
 - Filenames are HTML-escaped before injection into `<title>` to prevent malformed HTML
 
 ## Known Limitations
 
-- Requires internet connection (GitHub API for rendering + CDN for CSS/JS)
-- Rate-limited: 60 requests/hr without auth token, 5000/hr with token
+- CDN assets (CSS, starry-night, MathJax, Mermaid) require internet — HTML renders but is unstyled without it
 - Relative image paths in markdown won't resolve (HTML is served from `/tmp`)
 - `--help`/`--version` only checked on first argument
+- Syntax highlighting coverage depends on starry-night's "common" grammar bundle (~35 languages)

@@ -1,10 +1,14 @@
 # mdread
 
-Preview markdown files in the browser — rendered by GitHub's own API, pixel-perfect dark theme.
+Preview markdown files in the browser — GitHub-style dark theme, rendered locally.
 
 ## Installation
 
-No external dependencies needed (uses `curl`, `jq`/`python3`, and `open` which ship with macOS).
+Install the rendering dependency:
+
+```bash
+brew install cmark-gfm
+```
 
 Clone the repo and add it to your PATH:
 
@@ -29,24 +33,15 @@ mdread --version
 
 The HTML is opened in your default browser and automatically cleaned up after a few seconds.
 
-## Authentication
-
-Set `GITHUB_TOKEN` or `GH_TOKEN` to increase API rate limits from 60/hr to 5000/hr:
-
-```bash
-export GITHUB_TOKEN="ghp_..."
-```
-
 ## Supported Features
 
-- Tables, task lists, fenced code blocks, strikethrough
-- Syntax highlighting (identical to github.com)
+- Tables, task lists, fenced code blocks, strikethrough, footnotes
+- Syntax highlighting (matches GitHub's colors via starry-night)
 - Alerts (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!CAUTION]`)
-- Footnotes (`[^1]`)
 - Emoji shortcodes (`:rocket:` → 🚀)
 - LaTeX math (`$inline$` and `$$display$$`) via MathJax
 - Mermaid diagrams (` ```mermaid `) via Mermaid.js
 - Collapsible sections (`<details>` / `<summary>`)
 - Copy-to-clipboard buttons on code blocks
 
-Requires an internet connection (GitHub API for rendering + CDN for CSS/MathJax/Mermaid).
+Markdown rendering is done locally with `cmark-gfm` — no API calls, no rate limits, no auth tokens. CDN assets (CSS, syntax highlighting, MathJax, Mermaid) require an internet connection.
