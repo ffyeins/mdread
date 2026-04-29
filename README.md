@@ -18,7 +18,11 @@ echo 'export PATH="$HOME/.mdread:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-## How to Use
+## Tools
+
+### mdread
+
+Preview markdown in the browser. The HTML is opened in your default browser and automatically cleaned up after a few seconds.
 
 ```bash
 # Preview a single file
@@ -31,7 +35,23 @@ mdread --help
 mdread --version
 ```
 
-The HTML is opened in your default browser and automatically cleaned up after a few seconds.
+### mdtohtml
+
+Convert markdown files to standalone HTML files. Each input file produces a `.html` file in the same directory.
+
+```bash
+# Convert a single file (creates README.html)
+mdtohtml README.md
+
+# Convert multiple files
+mdtohtml file1.md file2.md
+
+# Convert all markdown files in a directory
+mdtohtml *.md
+
+mdtohtml --help
+mdtohtml --version
+```
 
 ## Supported Features
 
