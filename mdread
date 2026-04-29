@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="2.1.0"
+VERSION="3.0.0"
 
 usage() {
   cat <<'EOF'
 Usage: mdread <file.md> [file2.md ...]
 
-Convert markdown files to GitHub dark-themed HTML and open in the browser.
+Convert markdown files to GitHub-rendered HTML and open in the browser.
+Uses GitHub's Markdown API for pixel-perfect rendering — requires internet.
+Set GITHUB_TOKEN or GH_TOKEN for higher API rate limits (5000/hr vs 60/hr).
 EOF
   exit 1
 }
 
-if [[ $# -eq 0 ]]; then
-  usage
-fi
+if [[ $# -eq 0 ]]; then usage; fi
 
 # Only check first arg for flags — files named --help won't conflict
 case "${1:-}" in
@@ -22,199 +22,13 @@ case "${1:-}" in
   --version|-v) echo "mdread $VERSION"; exit 0 ;;
 esac
 
-if ! command -v pandoc &>/dev/null; then
-  echo "Error: pandoc is not installed. Install with: brew install pandoc" >&2
+if ! command -v curl &>/dev/null; then
+  echo "Error: curl is required" >&2
   exit 1
 fi
 
-# GitHub dark theme CSS — colors from github.com's dark mode
-# || true because `read` returns 1 when it hits the delimiter instead of EOF
-read -r -d '' CSS <<'CSSEOF' || true
-body {
-  background: #0d1117;
-  color: #e6edf3;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
-.markdown-body {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 32px 28px;
-}
-a {
-  color: #58a6ff;
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-h1, h2, h3, h4, h5, h6 {
-  color: #e6edf3;
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-}
-h1 {
-  font-size: 2em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid #30363d;
-}
-h2 {
-  font-size: 1.5em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid #30363d;
-}
-h3 { font-size: 1.25em; }
-h4 { font-size: 1em; }
-p { margin-top: 0; margin-bottom: 16px; }
-code {
-  background: #161b22;
-  padding: 0.2em 0.4em;
-  border-radius: 6px;
-  font-size: 85%;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-}
-pre {
-  background: #161b22;
-  padding: 16px;
-  border-radius: 6px;
-  overflow: auto;
-  line-height: 1.45;
-}
-pre code {
-  background: transparent;
-  padding: 0;
-  font-size: 85%;
-}
-blockquote {
-  margin: 0 0 16px 0;
-  padding: 0 1em;
-  color: #8b949e;
-  border-left: 0.25em solid #30363d;
-}
-hr {
-  height: 0.25em;
-  padding: 0;
-  margin: 24px 0;
-  background-color: #30363d;
-  border: 0;
-}
-ul, ol {
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding-left: 2em;
-}
-li + li { margin-top: 0.25em; }
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
-  margin-bottom: 16px;
-  width: auto;
-}
-table th, table td {
-  padding: 6px 13px;
-  border: 1px solid #30363d;
-}
-table th {
-  font-weight: 600;
-  background: #161b22;
-}
-table tr:nth-child(2n) {
-  background: #161b22;
-}
-img { max-width: 100%; }
-input[type="checkbox"] {
-  margin-right: 0.5em;
-}
-/* Syntax highlighting — pandoc breezedark token classes, colors matched to GitHub dark */
-code span.al { color: #e5534b; font-weight: bold; }
-code span.an { color: #8b949e; }
-code span.at { color: #79c0ff; }
-code span.bn { color: #79c0ff; }
-code span.bu { color: #ffa657; }
-code span.cf { color: #ff7b72; }
-code span.ch { color: #a5d6ff; }
-code span.cn { color: #79c0ff; }
-code span.co { color: #8b949e; }
-code span.cv { color: #8b949e; }
-code span.do { color: #8b949e; }
-code span.dt { color: #ff7b72; }
-code span.dv { color: #79c0ff; }
-code span.er { color: #e5534b; }
-code span.ex { color: #d2a8ff; }
-code span.fl { color: #79c0ff; }
-code span.fu { color: #d2a8ff; }
-code span.im { color: #ffa657; }
-code span.in { color: #8b949e; }
-code span.kw { color: #ff7b72; }
-code span.op { color: #ff7b72; }
-code span.ot { color: #79c0ff; }
-code span.pp { color: #ff7b72; }
-code span.re { color: #79c0ff; }
-code span.sc { color: #a5d6ff; }
-code span.ss { color: #a5d6ff; }
-code span.st { color: #a5d6ff; }
-code span.va { color: #ffa657; }
-code span.vs { color: #a5d6ff; }
-code span.wa { color: #e5534b; }
-/* GitHub-style alerts: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
-   Pandoc 3.9+ outputs these as <div class="note"> etc. */
-.note, .tip, .important, .warning, .caution {
-  padding: 8px 16px;
-  margin-bottom: 16px;
-  border-left: 0.25em solid;
-  border-radius: 6px;
-}
-.note { border-color: #58a6ff; }
-.tip { border-color: #3fb950; }
-.important { border-color: #a371f7; }
-.warning { border-color: #d29922; }
-.caution { border-color: #f85149; }
-.note > .title, .tip > .title, .important > .title, .warning > .title, .caution > .title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.note > .title p { color: #58a6ff; }
-.tip > .title p { color: #3fb950; }
-.important > .title p { color: #a371f7; }
-.warning > .title p { color: #d29922; }
-.caution > .title p { color: #f85149; }
-section.footnotes {
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid #30363d;
-  font-size: 0.875em;
-  color: #8b949e;
-}
-section.footnotes ol { padding-left: 1.5em; }
-a.footnote-ref { text-decoration: none; }
-a.footnote-back { text-decoration: none; color: #58a6ff; margin-left: 4px; }
-/* Pandoc wraps task lists in <ul class="task-list"> with checkboxes inside <label> */
-ul.task-list {
-  list-style: none;
-  padding-left: 1.2em;
-}
-details {
-  margin-bottom: 16px;
-}
-details summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: #e6edf3;
-  padding: 8px 0;
-}
-details summary:hover {
-  color: #58a6ff;
-}
-.math.display {
-  overflow-x: auto;
-  margin: 16px 0;
-}
-CSSEOF
+# Resolve GitHub API auth token
+token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
 
 # Track temp files for cleanup; trap ensures they're removed on early exit or error
 tmpfiles=()
@@ -228,17 +42,38 @@ for file in "$@"; do
     continue
   fi
 
+  # Build JSON payload — use jq if available, otherwise python3
+  if command -v jq &>/dev/null; then
+    payload=$(jq -Rs '{"text": ., "mode": "gfm"}' < "$file")
+  else
+    payload=$(python3 -c "import json,sys; print(json.dumps({'text':sys.stdin.read(),'mode':'gfm'}))" < "$file")
+  fi
+
+  # Call GitHub Markdown API
+  curl_args=(-s -X POST "https://api.github.com/markdown"
+    -H "Content-Type: application/json"
+    -H "Accept: application/vnd.github+json"
+    -H "X-GitHub-Api-Version: 2022-11-28")
+  [[ -n "$token" ]] && curl_args+=(-H "Authorization: Bearer $token")
+
+  body=$(curl "${curl_args[@]}" -d "$payload")
+
+  # Check for API errors (error responses contain "message" + "documentation_url")
+  if [[ "$body" == *'"message"'* && "$body" == *'"documentation_url"'* ]]; then
+    echo "Warning: GitHub API error for '$file'" >&2
+    if command -v jq &>/dev/null; then
+      echo "  $(echo "$body" | jq -r '.message')" >&2
+    else
+      echo "  $body" >&2
+    fi
+    echo "  Hint: Set GITHUB_TOKEN for higher rate limits (5000/hr)" >&2
+    continue
+  fi
+
   # macOS mktemp only replaces trailing Xs, so we create then rename to add .html
   tmp=$(mktemp /tmp/mdread.XXXXXX)
   tmphtml="${tmp}.html"
   mv "$tmp" "$tmphtml"
-
-  # --mathjax wraps math in \( \) delimiters for MathJax; -- prevents filename-as-flag
-  if ! body=$(pandoc -f gfm -t html5 --mathjax --syntax-highlighting=breezedark -- "$file"); then
-    echo "Warning: pandoc failed on '$file', skipping" >&2
-    rm -f "$tmphtml"
-    continue
-  fi
 
   # Escape &, <, > for safe use in <title> tag
   filename=$(basename "$file")
@@ -246,45 +81,122 @@ for file in "$@"; do
   safe_title="${safe_title//</&lt;}"
   safe_title="${safe_title//>/&gt;}"
 
-  # Only load CDN scripts when the content actually needs them
+  # Conditional CDN scripts — only load when content needs them
   scripts=""
-  if [[ "$body" == *'class="mermaid"'* ]]; then
-    # Pandoc outputs <pre class="mermaid"><code>...</code></pre> but mermaid.js
-    # expects raw text directly in the element — unwrap <code> before init
-    scripts+='<script>
-  document.querySelectorAll("pre.mermaid").forEach(function(pre) {
-    var code = pre.querySelector("code");
-    if (code) { pre.textContent = code.textContent; }
-  });
+  if [[ "$body" == *'language-mermaid'* ]]; then
+    read -r -d '' mermaid_script <<'MERMAIDEOF' || true
+<script>
+document.querySelectorAll("pre code.language-mermaid").forEach(function(code) {
+  var pre = code.parentElement;
+  var container = pre.closest(".highlight") || pre;
+  var div = document.createElement("div");
+  div.className = "mermaid";
+  div.textContent = code.textContent;
+  container.parentElement.replaceChild(div, container);
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad: true, theme: "dark"});</script>
-'
-  fi
-  if [[ "$body" == *'class="math '* ]]; then
-    # Matches both class="math inline" and class="math display"
-    scripts+='<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-'
+MERMAIDEOF
+    scripts+="$mermaid_script"
   fi
 
-  cat > "$tmphtml" <<HTMLEOF
+  if grep -qE '\$\$|\$[^ $`]|\\\\?\(' "$file" 2>/dev/null; then
+    read -r -d '' math_script <<'MATHEOF' || true
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [["$","$"],["\\(","\\)"]],
+    displayMath: [["$$","$$"],["\\[","\\]"]]
+  },
+  options: {skipHtmlTags: ["script","noscript","style","textarea","pre","code"]}
+};
+</script>
+<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+MATHEOF
+    scripts+="$math_script"
+  fi
+
+  # Assemble HTML — quoted heredocs + printf to avoid shell expansion of API output
+  {
+    cat <<'HEADER'
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-mode="dark" data-dark-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${safe_title}</title>
+HEADER
+    printf '<title>%s</title>\n' "$safe_title"
+    cat <<'STYLES'
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css">
 <style>
-${CSS}
+body { background: #0d1117; margin: 0; padding: 0; }
+.markdown-body { max-width: 980px; margin: 0 auto; padding: 32px 28px; }
+/* GitHub dark syntax highlighting — "pretty-lights" token classes */
+.pl-c { color: #8b949e; }
+.pl-c1, .pl-s .pl-v { color: #79c0ff; }
+.pl-e, .pl-en { color: #d2a8ff; }
+.pl-smi, .pl-s .pl-s1 { color: #c9d1d9; }
+.pl-ent { color: #7ee787; }
+.pl-k { color: #ff7b72; }
+.pl-s, .pl-pds, .pl-s .pl-pse .pl-s1 { color: #a5d6ff; }
+.pl-sr, .pl-sr .pl-cce, .pl-sr .pl-sre, .pl-sr .pl-sra { color: #a5d6ff; }
+.pl-v, .pl-smw { color: #ffa657; }
+.pl-bu { color: #f85149; }
+.pl-ii { color: #f0f6fc; background-color: #8e1519; }
+.pl-c2 { color: #f0f6fc; background-color: #b62324; }
+.pl-ml { color: #f2cc60; }
+.pl-mh, .pl-mh .pl-en, .pl-ms { color: #1f6feb; font-weight: bold; }
+.pl-mi { color: #c9d1d9; font-style: italic; }
+.pl-mb { color: #c9d1d9; font-weight: bold; }
+.pl-md { color: #ffa198; background-color: #490202; }
+.pl-mi1 { color: #56d364; background-color: #0f5323; }
+.pl-mc { color: #ffa657; background-color: #5a1e02; }
+.pl-mdr { color: #d2a8ff; }
+/* Copy button */
+.highlight, pre { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: #21262d; border: 1px solid #30363d; border-radius: 6px;
+  color: #8b949e; cursor: pointer; padding: 4px; line-height: 1;
+  opacity: 0; transition: opacity 0.15s;
+}
+.highlight:hover .copy-btn, pre:hover > .copy-btn { opacity: 1; }
+.copy-btn:hover { color: #e6edf3; background: #30363d; }
 </style>
 </head>
 <body>
 <div class="markdown-body">
-${body}
+STYLES
+    printf '%s\n' "$body"
+    cat <<'SCRIPTS'
 </div>
-${scripts}</body>
-</html>
-HTMLEOF
+<script>
+document.querySelectorAll("pre").forEach(function(pre) {
+  if (pre.closest(".mermaid")) return;
+  var container = pre.closest(".highlight") || pre;
+  if (container.querySelector(".copy-btn")) return;
+  var svgCopy = '<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25zM5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25z"/></svg>';
+  var svgCheck = '<svg viewBox="0 0 16 16" width="16" height="16" fill="#3fb950"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z"/></svg>';
+  var btn = document.createElement("button");
+  btn.className = "copy-btn";
+  btn.innerHTML = svgCopy;
+  btn.title = "Copy";
+  btn.addEventListener("click", function() {
+    var code = pre.querySelector("code");
+    var text = code ? code.textContent : pre.textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      btn.innerHTML = svgCheck;
+      setTimeout(function() { btn.innerHTML = svgCopy; }, 2000);
+    });
+  });
+  container.appendChild(btn);
+});
+</script>
+SCRIPTS
+    printf '%s\n' "$scripts"
+    printf '%s\n' "</body>" "</html>"
+  } > "$tmphtml"
 
   tmpfiles+=("$tmphtml")
   ((++converted))

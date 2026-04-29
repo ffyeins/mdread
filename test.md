@@ -1,7 +1,3 @@
-**List test**:
-- item 1
-- item 2
-
 # mdread Test File
 
 This is a test file for **mdread**, a markdown preview tool.
@@ -48,6 +44,12 @@ print(hello("world"))
    - Sub-item B
 2. Second item
 3. Third item
+
+## List with no line separation
+
+**List test**:
+- item 1
+- item 2
 
 ---
 
