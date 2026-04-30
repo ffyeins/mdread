@@ -1,6 +1,6 @@
 # mdread
 
-Two bash scripts for working with markdown files — GitHub-style dark theme, rendered locally. macOS only.
+Two bash scripts for working with markdown files — GitHub-style theme (dark default, light via `--light`), rendered locally. macOS only.
 
 ## Project Structure
 
@@ -12,9 +12,9 @@ Two bash scripts for working with markdown files — GitHub-style dark theme, re
 Both tools share the same rendering pipeline:
 
 1. Renders markdown to HTML locally using `cmark-gfm` with all GFM extensions
-2. Wraps the output in an HTML template with `github-markdown-css` (dark) from CDN
-3. Loads `@wooorm/starry-night` from CDN for syntax highlighting (produces `pl-*` classes matching GitHub)
-4. Conditionally injects MathJax/Mermaid CDN scripts only when content needs them
+2. Wraps the output in an HTML template with `github-markdown-css` (dark or light variant from CDN, picked by `--light`/`--dark` flag; default dark)
+3. Loads `@wooorm/starry-night` from CDN for syntax highlighting (produces `pl-*` classes matching GitHub); inline `pl-*` CSS swaps between GitHub's dark and light "pretty-lights" palettes per theme
+4. Conditionally injects MathJax/Mermaid CDN scripts only when content needs them; Mermaid initialized with `theme: "dark"` or `"default"` to match
 5. Adds copy-to-clipboard buttons on code blocks via inline JavaScript
 
 **mdread** additionally:
@@ -38,9 +38,10 @@ Both tools share the same rendering pipeline:
 - Rendering is done locally via `cmark-gfm` — no API calls, no rate limits, no auth tokens
 - GFM extensions enabled: table, autolink, tagfilter, strikethrough, tasklist, footnotes
 - `--unsafe` flag allows raw HTML passthrough in markdown
-- CSS uses `github-markdown-css` (sindresorhus) dark variant from CDN
+- Theme is selected via `--light`/`--dark` flag (anywhere in args; last one wins). Default is dark. The flag is parsed and stripped before the file loop runs, so files literally named `--light`/`--dark` are not supported as inputs
+- CSS uses `github-markdown-css` (sindresorhus); the script picks `github-markdown-dark.min.css` or `github-markdown-light.min.css` from the CDN based on the theme
 - Syntax highlighting uses `@wooorm/starry-night` (ES module from esm.sh CDN), which uses the same TextMate grammars as GitHub and produces identical `pl-*` CSS classes
-- Inline `pl-*` CSS provides GitHub's "pretty-lights" dark syntax colors
+- Inline `pl-*` CSS provides GitHub's "pretty-lights" syntax colors; the script emits the dark or light palette to match the chosen theme
 - GitHub-style alerts (`> [!NOTE]`, `> [!TIP]`, etc.) transformed from blockquotes to styled divs via inline JS
 - Emoji shortcodes (`:rocket:`, `:+1:`, etc.) replaced with unicode emoji via inline JS
 - HTML assembly uses quoted heredocs (`<<'EOF'`) + `printf '%s'` for variable content to avoid shell expansion

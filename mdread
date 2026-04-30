@@ -5,11 +5,16 @@ VERSION="4.0.0"
 
 usage() {
   cat <<'EOF'
-Usage: mdread <file.md> [file2.md ...]
+Usage: mdread [--light|--dark] <file.md> [file2.md ...]
 
 Convert markdown files to GitHub-style HTML and open in the browser.
 Uses cmark-gfm for local rendering — no internet required for conversion.
 CSS and syntax highlighting loaded from CDN when available.
+
+Options:
+  --light    Render with GitHub light theme
+  --dark     Render with GitHub dark theme (default)
+
 Install dependency: brew install cmark-gfm
 EOF
   exit 1
@@ -28,80 +33,98 @@ if ! command -v cmark-gfm &>/dev/null; then
   exit 1
 fi
 
-# Track temp files for cleanup; trap ensures they're removed on early exit or error
-tmpfiles=()
-converted=0
-cleanup() { [[ ${#tmpfiles[@]} -gt 0 ]] && rm -f "${tmpfiles[@]}"; }
-trap cleanup EXIT
+# Theme selection: extract --light / --dark anywhere in the args; last one wins.
+# Default is dark to preserve historical behavior.
+theme="dark"
+remaining=()
+for arg in "$@"; do
+  case "$arg" in
+    --light) theme="light" ;;
+    --dark)  theme="dark" ;;
+    *) remaining+=("$arg") ;;
+  esac
+done
+set -- "${remaining[@]}"
+[[ $# -eq 0 ]] && usage
 
-for file in "$@"; do
-  if [[ ! -f "$file" || ! -r "$file" ]]; then
-    echo "Warning: cannot read '$file', skipping" >&2
-    continue
-  fi
-
-  # Render markdown to HTML locally with all GFM extensions
-  body=$(cmark-gfm -e table -e autolink -e tagfilter -e strikethrough -e tasklist -e footnotes --unsafe < "$file")
-
-  # macOS mktemp only replaces trailing Xs, so we create then rename to add .html
-  tmp=$(mktemp /tmp/mdread.XXXXXX)
-  tmphtml="${tmp}.html"
-  mv "$tmp" "$tmphtml"
-
-  # Escape &, <, > for safe use in <title> tag
-  filename=$(basename "$file")
-  safe_title="${filename//&/&amp;}"
-  safe_title="${safe_title//</&lt;}"
-  safe_title="${safe_title//>/&gt;}"
-
-  # Conditional CDN scripts — only load when content needs them
-  scripts=""
-  if [[ "$body" == *'language-mermaid'* ]]; then
-    read -r -d '' mermaid_script <<'MERMAIDEOF' || true
-<script>
-document.querySelectorAll("code.language-mermaid").forEach(function(code) {
-  var pre = code.parentElement;
-  var div = document.createElement("div");
-  div.className = "mermaid";
-  div.textContent = code.textContent;
-  pre.parentElement.replaceChild(div, pre);
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad: true, theme: "dark"});</script>
-MERMAIDEOF
-    scripts+="$mermaid_script"
-  fi
-
-  if grep -qE '\$\$|\$[^ $`]|\\\\?\(' "$file" 2>/dev/null; then
-    read -r -d '' math_script <<'MATHEOF' || true
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [["$","$"],["\\(","\\)"]],
-    displayMath: [["$$","$$"],["\\[","\\]"]]
-  },
-  options: {skipHtmlTags: ["script","noscript","style","textarea","pre","code"]}
-};
-</script>
-<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-MATHEOF
-    scripts+="$math_script"
-  fi
-
-  # Assemble HTML — quoted heredocs + printf to avoid shell expansion
-  {
-    cat <<'HEADER'
-<!DOCTYPE html>
-<html lang="en" data-color-mode="dark" data-dark-theme="dark">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-HEADER
-    printf '<title>%s</title>\n' "$safe_title"
-    cat <<'STYLES'
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css">
-<style>
+# Theme assets — selected once, reused per file
+case "$theme" in
+  light)
+    css_url="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-light.min.css"
+    mermaid_theme="default"
+    html_attrs='data-color-mode="light" data-light-theme="light"'
+    read -r -d '' inline_css <<'CSSEOF' || true
+body { background: #ffffff; margin: 0; padding: 0; }
+.markdown-body { max-width: 980px; margin: 0 auto; padding: 32px 28px; }
+/* GitHub light syntax highlighting — "pretty-lights" token classes */
+.pl-c { color: #6e7781; }
+.pl-c1, .pl-s .pl-v { color: #0550ae; }
+.pl-e, .pl-en { color: #8250df; }
+.pl-smi, .pl-s .pl-s1 { color: #24292f; }
+.pl-ent { color: #116329; }
+.pl-k { color: #cf222e; }
+.pl-s, .pl-pds, .pl-s .pl-pse .pl-s1 { color: #0a3069; }
+.pl-sr, .pl-sr .pl-cce, .pl-sr .pl-sre, .pl-sr .pl-sra { color: #0a3069; }
+.pl-v, .pl-smw { color: #953800; }
+.pl-bu { color: #82071e; }
+.pl-ii { color: #f6f8fa; background-color: #82071e; }
+.pl-c2 { color: #f6f8fa; background-color: #cf222e; }
+.pl-ml { color: #3b2300; }
+.pl-mh, .pl-mh .pl-en, .pl-ms { color: #0550ae; font-weight: bold; }
+.pl-mi { color: #24292f; font-style: italic; }
+.pl-mb { color: #24292f; font-weight: bold; }
+.pl-md { color: #82071e; background-color: #ffebe9; }
+.pl-mi1 { color: #116329; background-color: #dafbe1; }
+.pl-mc { color: #953800; background-color: #ffd8b5; }
+.pl-mdr { color: #8250df; }
+.pl-kos { color: #24292f; }
+/* Keyboard shortcut styling */
+kbd {
+  background: #f6f8fa; border: 1px solid #d0d7de; border-bottom-color: #afb8c1;
+  border-radius: 6px; box-shadow: inset 0 -1px 0 #afb8c1;
+  color: #24292f; font-size: 11px; line-height: 10px; padding: 3px 5px;
+  vertical-align: middle;
+}
+/* GitHub-style alerts — matches github.com markup: div.markdown-alert */
+.markdown-alert {
+  border-left: 3px solid; padding: 8px 16px;
+  margin-bottom: 16px; color: inherit;
+}
+.markdown-alert > :first-child { margin-top: 0; }
+.markdown-alert > :last-child { margin-bottom: 0; }
+.markdown-alert-title {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; margin-bottom: 4px; line-height: 1;
+}
+.markdown-alert-title svg { flex-shrink: 0; }
+.markdown-alert-note { border-color: #0969da; }
+.markdown-alert-note .markdown-alert-title { color: #0969da; }
+.markdown-alert-tip { border-color: #1a7f37; }
+.markdown-alert-tip .markdown-alert-title { color: #1a7f37; }
+.markdown-alert-important { border-color: #8250df; }
+.markdown-alert-important .markdown-alert-title { color: #8250df; }
+.markdown-alert-warning { border-color: #9a6700; }
+.markdown-alert-warning .markdown-alert-title { color: #9a6700; }
+.markdown-alert-caution { border-color: #cf222e; }
+.markdown-alert-caution .markdown-alert-title { color: #d1242f; }
+/* Copy button */
+.code-wrapper { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;
+  color: #656d76; cursor: pointer; padding: 4px; line-height: 1;
+  opacity: 0; transition: opacity 0.15s;
+}
+.code-wrapper:hover > .copy-btn { opacity: 1; }
+.copy-btn:hover { color: #24292f; background: #eaeef2; }
+.copy-btn.copied { color: #1a7f37; }
+CSSEOF
+    ;;
+  dark)
+    css_url="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css"
+    mermaid_theme="dark"
+    html_attrs='data-color-mode="dark" data-dark-theme="dark"'
+    read -r -d '' inline_css <<'CSSEOF' || true
 body { background: #0d1117; margin: 0; padding: 0; }
 .markdown-body { max-width: 980px; margin: 0 auto; padding: 32px 28px; }
 /* GitHub dark syntax highlighting — "pretty-lights" token classes */
@@ -165,7 +188,85 @@ kbd {
 }
 .code-wrapper:hover > .copy-btn { opacity: 1; }
 .copy-btn:hover { color: #e6edf3; background: #30363d; }
-</style>
+.copy-btn.copied { color: #3fb950; }
+CSSEOF
+    ;;
+esac
+
+# Track temp files for cleanup; trap ensures they're removed on early exit or error
+tmpfiles=()
+converted=0
+cleanup() { [[ ${#tmpfiles[@]} -gt 0 ]] && rm -f "${tmpfiles[@]}"; }
+trap cleanup EXIT
+
+for file in "$@"; do
+  if [[ ! -f "$file" || ! -r "$file" ]]; then
+    echo "Warning: cannot read '$file', skipping" >&2
+    continue
+  fi
+
+  # Render markdown to HTML locally with all GFM extensions
+  body=$(cmark-gfm -e table -e autolink -e tagfilter -e strikethrough -e tasklist -e footnotes --unsafe < "$file")
+
+  # macOS mktemp only replaces trailing Xs, so we create then rename to add .html
+  tmp=$(mktemp /tmp/mdread.XXXXXX)
+  tmphtml="${tmp}.html"
+  mv "$tmp" "$tmphtml"
+
+  # Escape &, <, > for safe use in <title> tag
+  filename=$(basename "$file")
+  safe_title="${filename//&/&amp;}"
+  safe_title="${safe_title//</&lt;}"
+  safe_title="${safe_title//>/&gt;}"
+
+  # Conditional CDN scripts — only load when content needs them
+  scripts=""
+  if [[ "$body" == *'language-mermaid'* ]]; then
+    read -r -d '' mermaid_script <<'MERMAIDEOF' || true
+<script>
+document.querySelectorAll("code.language-mermaid").forEach(function(code) {
+  var pre = code.parentElement;
+  var div = document.createElement("div");
+  div.className = "mermaid";
+  div.textContent = code.textContent;
+  pre.parentElement.replaceChild(div, pre);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+MERMAIDEOF
+    mermaid_script+=$'\n'"<script>mermaid.initialize({startOnLoad: true, theme: \"$mermaid_theme\"});</script>"
+    scripts+="$mermaid_script"
+  fi
+
+  if grep -qE '\$\$|\$[^ $`]|\\\\?\(' "$file" 2>/dev/null; then
+    read -r -d '' math_script <<'MATHEOF' || true
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [["$","$"],["\\(","\\)"]],
+    displayMath: [["$$","$$"],["\\[","\\]"]]
+  },
+  options: {skipHtmlTags: ["script","noscript","style","textarea","pre","code"]}
+};
+</script>
+<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+MATHEOF
+    scripts+="$math_script"
+  fi
+
+  # Assemble HTML — quoted heredocs + printf to avoid shell expansion
+  {
+    printf '%s\n' '<!DOCTYPE html>'
+    printf '<html lang="en" %s>\n' "$html_attrs"
+    cat <<'HEADER'
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+HEADER
+    printf '<title>%s</title>\n' "$safe_title"
+    printf '<link rel="stylesheet" href="%s">\n' "$css_url"
+    printf '<style>\n%s\n</style>\n' "$inline_css"
+    cat <<'STYLES'
 </head>
 <body>
 <div class="markdown-body">
@@ -240,7 +341,7 @@ for (const code of document.querySelectorAll('code[class*="language-"]')) {
 document.querySelectorAll("pre").forEach(function(pre) {
   if (pre.closest(".mermaid")) return;
   var svgCopy = '<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25zM5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25z"/></svg>';
-  var svgCheck = '<svg viewBox="0 0 16 16" width="16" height="16" fill="#3fb950"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z"/></svg>';
+  var svgCheck = '<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z"/></svg>';
   var btn = document.createElement("button");
   btn.className = "copy-btn";
   btn.innerHTML = svgCopy;
@@ -249,8 +350,12 @@ document.querySelectorAll("pre").forEach(function(pre) {
     var code = pre.querySelector("code");
     var text = code ? code.textContent : pre.textContent;
     navigator.clipboard.writeText(text).then(function() {
+      btn.classList.add("copied");
       btn.innerHTML = svgCheck;
-      setTimeout(function() { btn.innerHTML = svgCopy; }, 2000);
+      setTimeout(function() {
+        btn.classList.remove("copied");
+        btn.innerHTML = svgCopy;
+      }, 2000);
     });
   });
   var wrapper = document.createElement("div");
