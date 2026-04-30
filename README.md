@@ -1,6 +1,6 @@
 # mdread
 
-Preview markdown files in the browser — GitHub-style dark theme, rendered locally.
+Preview markdown files in the browser — GitHub-style theme (dark default, light via `--light`), rendered locally.
 
 ## Installation
 
@@ -31,6 +31,9 @@ mdread README.md
 # Preview multiple files (opens one tab each)
 mdread file1.md file2.md
 
+# Render with the light theme instead of the default dark
+mdread --light README.md
+
 mdread --help
 mdread --version
 ```
@@ -49,6 +52,9 @@ mdtohtml file1.md file2.md
 # Convert all markdown files in a directory
 mdtohtml *.md
 
+# Render with the light theme instead of the default dark
+mdtohtml --light README.md
+
 mdtohtml --help
 mdtohtml --version
 ```
@@ -56,6 +62,7 @@ mdtohtml --version
 ## Supported Features
 
 - Tables, task lists, fenced code blocks, strikethrough, footnotes
+- GitHub light and dark themes (`--light` / `--dark`, default dark) — page styling, syntax highlighting, alerts, kbd, copy buttons, and Mermaid diagrams all switch together
 - Syntax highlighting (matches GitHub's colors via starry-night)
 - Alerts (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!CAUTION]`)
 - Emoji shortcodes (`:rocket:` → 🚀)
