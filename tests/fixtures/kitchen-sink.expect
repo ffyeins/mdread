@@ -1,0 +1,5 @@
+# Smoke test: the full sample renders without JS errors or CSP violations
+@ source ../../test.md
++ <mjx-container
++ class="mermaid" data-processed="true"
++ <span class="pl-
