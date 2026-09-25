@@ -1,6 +1,11 @@
+---
+title: mdread Test File
+purpose: kitchen-sink sample for manual checks
+---
+
 # mdread Test File
 
-This is a test file for **mdread**, a markdown preview tool.
+This is a test file for **mdread**, a markdown preview tool. The front matter above renders as a table.
 
 ---
 
@@ -110,6 +115,19 @@ GROUP BY u.id, u.username, u.email, u.created_at, u.last_login_at, p.display_nam
 HAVING COUNT(DISTINCT o.id) > 0 AND SUM(o.total_amount) > 100.00 AND MAX(o.created_at) > NOW() - INTERVAL '6 months'
 ORDER BY lifetime_value DESC, total_orders DESC, u.created_at ASC
 LIMIT 500 OFFSET 0;
+```
+
+### Languages loaded on demand
+
+```toml
+# Grammar fetched only when a page uses it
+name = "mdread"
+themes = ["dark", "light"]
+```
+
+```dockerfile
+FROM alpine:3.20
+CMD ["echo", "hello"]
 ```
 
 ### Fenced without language
@@ -248,11 +266,16 @@ Should still render in a monospace font with a background.
 
 ## Images
 
-![Placeholder image](https://via.placeholder.com/600x200/30363d/e6edf3?text=Image+Rendering+Test)
+![Sample image](tests/fixtures/img/dot.svg)
 
 Image with title:
 
-![Alt text](https://via.placeholder.com/300x100/30363d/e6edf3?text=With+Title "This is the title text")
+![Alt text](tests/fixtures/img/dot.svg "This is the title text")
+
+Theme-specific images: exactly one of these two should show.
+
+![Dark theme only](tests/fixtures/img/dot.svg#gh-dark-mode-only)
+![Light theme only](tests/fixtures/img/dot.svg#gh-light-mode-only)
 
 ## Links
 
@@ -345,6 +368,7 @@ And another one[^note].
 
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
+> Formatting survives: **bold**, `code` and a [link](#emoji).
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
@@ -368,7 +392,9 @@ Unicode emoji should always work: 👍 🚀 ⚠️ ✅ ❌
 
 ## Math (LaTeX)
 
-Inline math: $E = mc^2$
+Inline math: $E = mc^2$, and a set $\{a, b\}$.
+
+Dollar amounts stay text: it costs $5 and $10.
 
 Block math:
 
@@ -382,6 +408,12 @@ $$
 \nabla \cdot \mathbf{B} &= 0
 \end{aligned}
 $$
+
+A `math` code block, and GitHub's inline code math: $`\sqrt{2}`$
+
+```math
+\int_0^1 x^2 \, dx = \frac{1}{3}
+```
 
 ## Mermaid Diagrams
 

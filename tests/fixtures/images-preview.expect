@@ -1,0 +1,4 @@
+# mdread resolves relative paths against the source file's directory
+@ source images.md
+@ mode preview
++ <base href="{FIXTURES}/">
