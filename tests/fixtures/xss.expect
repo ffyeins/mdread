@@ -1,0 +1,5 @@
+# Raw HTML from markdown must not run script; GFM tagfilter still applies
+@ allow-csp
+- data-pwned="
++ &lt;script&gt;
++ &lt;style&gt;

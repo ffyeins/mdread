@@ -1,0 +1,5 @@
+# GitHub shows flat front matter as a one-row table
++ <th>title</th><th>tags</th>
++ <td>My Doc</td><td>demo</td>
+- <hr>
+- <h2
