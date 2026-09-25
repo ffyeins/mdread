@@ -1,0 +1,6 @@
+# Markdown escapes must not touch math; $ amounts are not math.
++ It costs $5 and $10 today.
+=6 <mjx-container
+=2 <mjx-mtr
+- <em>
+- data-math-style="

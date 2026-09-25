@@ -1,0 +1,5 @@
+# Dark theme keeps only dark-mode images
++ alt="dark logo"
+- alt="light logo"
++ media="all" srcset="img/dot.svg?dark"
+- srcset="img/dot.svg?light"

@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+# Regression tests for mdread and mdtohtml.
+#
+# Each tests/fixtures/<name>.expect renders a markdown fixture, dumps the DOM after the page's
+# JavaScript has run (headless Chrome), and checks it line by line:
+#   + text     must appear              - text     must not appear
+#   =N text    must appear exactly N times
+#   @ source other.md   render this file instead of <name>.md (path relative to fixtures/)
+#   @ theme light       render with --light
+#   @ mode preview      render through mdread instead of mdtohtml
+#   @ allow-csp         don't fail on Content-Security-Policy violations
+# {FIXTURES} in an expectation expands to the fixtures directory as a file:// URL.
+# JS errors and CSP violations logged by the page fail the fixture.
+#
+# Then runs CLI checks. Needs Google Chrome ($CHROME overrides the path) and network access
+# for the CDN assets.
+set -uo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd -P)
+fixtures="$root/tests/fixtures"
+chrome=${CHROME:-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}
+work=$(mktemp -d "${TMPDIR:-/tmp}/mdread-tests.XXXXXX")
+trap 'rm -rf "$work"' EXIT
+
+# mdread opens its output; a stub `open` first on PATH prints the path instead
+mkdir -p "$work/bin"
+printf '#!/bin/sh\nprintf "%%s\\n" "$@"\n' > "$work/bin/open"
+chmod +x "$work/bin/open"
+export PATH="$work/bin:$PATH"
+
+pass=0
+fail=0
+ok()  { pass=$((pass + 1)); printf '  ok    %s\n' "$1"; }
+bad() {
+  fail=$((fail + 1))
+  printf '  FAIL  %s\n' "$1"
+  if [[ -n ${2:-} ]]; then printf '        %s\n' "$2"; fi
+}
+
+dump_dom() { # <html file> <dom out> <log out>
+  # No --user-data-dir: headless Chrome already uses a throwaway profile, and a fresh
+  # explicit one hangs on macOS
+  "$chrome" --headless=new --disable-gpu --no-first-run --no-default-browser-check \
+    --virtual-time-budget=20000 --enable-logging=stderr --v=0 \
+    --dump-dom "file://$1" > "$2" 2> "$3"
+}
+
+run_fixture() { # <expect file>
+  local expect=$1 name src theme=dark mode=save allow_csp=0 line dir html dom log
+  local op text count checks=0 failed=0
+  name=$(basename "$expect" .expect)
+  src="$fixtures/$name.md"
+
+  while IFS= read -r line || [[ -n $line ]]; do
+    case $line in
+      '@ source '*) src="$fixtures/${line#@ source }" ;;
+      '@ theme '*) theme=${line#@ theme } ;;
+      '@ mode '*) mode=${line#@ mode } ;;
+      '@ allow-csp') allow_csp=1 ;;
+    esac
+  done < "$expect"
+
+  dir="$work/$name"
+  mkdir -p "$dir"
+  if [[ $mode == preview ]]; then
+    html=$(TMPDIR="$dir" "$root/mdread" "--$theme" "$src" 2> "$dir/stderr")
+  else
+    cp "$src" "$dir/"
+    cp -R "$fixtures/img" "$dir/"
+    html=$("$root/mdtohtml" "--$theme" "$dir/$(basename "$src")" 2> "$dir/stderr")
+  fi
+  if [[ -z $html || ! -f $html ]]; then
+    bad "$name: render failed" "$(head -3 "$dir/stderr")"
+    return
+  fi
+
+  dom="$dir/dom.html"
+  log="$dir/chrome.log"
+  dump_dom "$html" "$dom" "$log"
+
+  while IFS= read -r line || [[ -n $line ]]; do
+    [[ -z $line || $line == '#'* || $line == '@'* ]] && continue
+    op=${line%% *}
+    text=${line#* }
+    text=${text//\{FIXTURES\}/file://$fixtures}
+    count=$(grep -oF -- "$text" "$dom" | wc -l | tr -d ' ')
+    checks=$((checks + 1))
+    case $op in
+      +) [[ $count -gt 0 ]] ;;
+      -) [[ $count -eq 0 ]] ;;
+      =*) [[ $count -eq ${op#=} ]] ;;
+      *) false ;;
+    esac || { bad "$name: $line" "found $count"; failed=1; }
+  done < "$expect"
+
+  if grep -q 'CONSOLE.*Uncaught' "$log"; then
+    bad "$name: JavaScript error" "$(grep -m1 'CONSOLE.*Uncaught' "$log" | cut -c1-200)"
+    failed=1
+  fi
+  if [[ $allow_csp -eq 0 ]] && grep -q 'CONSOLE.*Content Security Policy' "$log"; then
+    bad "$name: CSP violation" "$(grep -m1 'CONSOLE.*Content Security Policy' "$log" | cut -c1-200)"
+    failed=1
+  fi
+  [[ $failed -eq 0 ]] && ok "$name ($checks checks)"
+}
+
+# <expected status> <description> <command...>; output lands in $work/cli.out / cli.err
+cli() {
+  local want=$1 desc=$2 status
+  shift 2
+  "$@" > "$work/cli.out" 2> "$work/cli.err"
+  status=$?
+  if [[ $status -eq $want ]]; then
+    ok "cli: $desc"
+    return 0
+  fi
+  bad "cli: $desc" "exit $status, want $want: $(head -c 200 "$work/cli.err")"
+  return 1
+}
+
+# <description> <condition command...>
+assert() {
+  local desc=$1
+  shift
+  if "$@"; then ok "cli: $desc"; else bad "cli: $desc"; fi
+}
+
+echo "Fixtures"
+if [[ -x $chrome ]]; then
+  for expect in "$fixtures"/*.expect; do
+    run_fixture "$expect"
+  done
+else
+  echo "  skipped: Chrome not found at $chrome (set CHROME)"
+fi
+
+echo "CLI"
+c="$work/cli"
+mkdir -p "$c"
+printf '# hi\n' > "$c/hand.md"
+cp "$c/hand.md" "$c/a.markdown"
+cp "$c/hand.md" "$c/B.MD"
+cp "$c/hand.md" "$c/-notes.md"
+cp "$c/hand.md" "$c/legacy.md"
+printf 'hand-written\n' > "$c/hand.html"
+printf '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css">\n' > "$c/legacy.html"
+
+cli 2 "no arguments prints usage, exit 2" "$root/mdread"
+cli 2 "only a theme flag prints usage, exit 2" "$root/mdread" --light &&
+  assert "usage goes to stderr" grep -q Usage "$work/cli.err"
+cli 0 "mdread --help exits 0" "$root/mdread" --help &&
+  assert "help goes to stdout" grep -q Usage "$work/cli.out"
+cli 0 "mdtohtml --help exits 0" "$root/mdtohtml" --help
+cli 0 "mdread --version" "$root/mdread" --version &&
+  assert "version names mdread" grep -q '^mdread ' "$work/cli.out"
+cli 2 "unknown option exits 2" "$root/mdtohtml" -x "$c/hand.md"
+cli 2 "mdread rejects --force" "$root/mdread" --force "$c/hand.md"
+in_dir() { (cd "$1" && shift && "$@"); }
+cli 0 "-- allows a dash-leading filename" in_dir "$c" "$root/mdtohtml" -- -notes.md
+assert "  -notes.html written" test -f "$c/-notes.html"
+cli 0 "markdown extensions map to .html" "$root/mdtohtml" "$c/a.markdown" "$c/B.MD"
+assert "  a.html and B.html written" test -f "$c/a.html" -a -f "$c/B.html"
+cli 1 "refuses to overwrite hand-written html" "$root/mdtohtml" "$c/hand.md"
+assert "  hand.html untouched" grep -q hand-written "$c/hand.html"
+cli 0 "--force overwrites" "$root/mdtohtml" --force "$c/hand.md"
+assert "  output carries generator marker" grep -q 'name="generator" content="mdtohtml' "$c/hand.html"
+cli 0 "regenerates its own output without --force" "$root/mdtohtml" "$c/hand.md"
+cli 0 "overwrites mdtohtml 1.x output without --force" "$root/mdtohtml" "$c/legacy.md"
+cli 1 "missing input: exit 1, other files still converted" "$root/mdtohtml" "$c/a.markdown" "$c/missing.md"
+cli 0 "mdread --light renders the light theme" env TMPDIR="$c" "$root/mdread" --light "$c/hand.md" &&
+  assert "  light stylesheet used" grep -q 'github-markdown-light' "$(head -1 "$work/cli.out")"
+
+echo
+echo "$pass passed, $fail failed"
+[[ $fail -eq 0 ]]

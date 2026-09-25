@@ -1,0 +1,6 @@
+@ source images.md
+@ theme light
++ alt="light logo"
+- alt="dark logo"
++ media="all" srcset="img/dot.svg?light"
+- srcset="img/dot.svg?dark"
