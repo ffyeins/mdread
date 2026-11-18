@@ -695,13 +695,16 @@ const expand = (job, opener) => {
   if (job.mounted) {
     // A new Pele drawing, laid out once for the dialog's width, without Pele's zoom. Once
     // drawn, its container shrinks to fit it, so it centers and scrolls like the others.
+    // Never laid out narrower than on the page: Pele turns a left-right diagram that doesn't
+    // fit top to bottom when its width is under 640px, and in windows under 768px wide the
+    // dialog's view is narrower than the page's diagram, so it could turn there alone.
     const div = document.createElement("div");
     div.className = "pele-diagram";
     div.style.width = "100%";
     view.append(div);
     mounted = pele.mount(div, job.text, {
       zoom: false,
-      maxWidth: div.clientWidth,
+      maxWidth: Math.max(div.clientWidth, job.el.clientWidth),
       onRender(result) {
         div.style.width = "";
         zoom.show(div.querySelector(":scope > svg"), result.width, result.height);
