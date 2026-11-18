@@ -2,12 +2,12 @@
 # buttons; neither beautiful-mermaid nor Pele loads
 @ source ../../mermaid.md
 @ mermaid mermaid
-=26 class="mermaid-diagram"
-=26 <svg id="mdr-mermaid-
-=26 class="mdr-diagram"
-=26 aria-label="Copy diagram source"
-=26 aria-label="Download SVG"
-=26 aria-label="Expand diagram"
+=28 class="mermaid-diagram"
+=28 <svg id="mdr-mermaid-
+=28 class="mdr-diagram"
+=28 aria-label="Copy diagram source"
+=28 aria-label="Download SVG"
+=28 aria-label="Expand diagram"
 =1 <script src="https://cdn.jsdelivr.net/npm/mermaid@
 - class="mdr-diagram-error"
 - Syntax error in text

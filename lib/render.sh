@@ -27,8 +27,8 @@ mdr_usage_error() {
 
 mdr_set_mermaid() {
   case $1 in
-    beautiful-mermaid|pele|mermaid) mermaid=$1 ;;
-    *) mdr_usage_error "unknown mermaid renderer: '$1' (beautiful-mermaid, pele or mermaid)" ;;
+    pele|beautiful-mermaid|mermaid) mermaid=$1 ;;
+    *) mdr_usage_error "unknown mermaid renderer: '$1' (pele, beautiful-mermaid or mermaid)" ;;
   esac
 }
 
@@ -53,7 +53,7 @@ mdr_parse_args() {
   local allow_force=$1
   shift
   theme=dark
-  mermaid=beautiful-mermaid
+  mermaid=pele
   max_height=80vh
   force=0
   action=run
@@ -403,10 +403,11 @@ JS
       "$renderer" "$mermaid_theme" "$libs"
     cat <<'JS'
 // Each Mermaid block becomes a diagram in a .mdr-diagram wrapper, with buttons to copy its
-// source, download it as SVG and expand it. beautiful-mermaid draws the types it knows
-// (flowchart, state, sequence, class, ER, XY chart); Pele draws the rest, and any diagram
-// beautiful-mermaid throws on. With --mermaid pele, Pele draws everything; with --mermaid
-// mermaid, mermaid.js does. Each library loads only if a diagram needs it.
+// source, download it as SVG and expand it. By default Pele draws everything. With
+// --mermaid beautiful-mermaid, beautiful-mermaid draws the types it knows (flowchart, state,
+// sequence, class, ER, XY chart) and Pele the rest, plus any diagram beautiful-mermaid throws
+// on; with --mermaid mermaid, mermaid.js draws everything. Each library loads only if a
+// diagram needs it.
 const root = document.documentElement;
 const jobs = [...document.querySelectorAll(".markdown-body pre > code.language-mermaid")]
   .map((code, i) => ({pre: code.parentElement, text: code.textContent, n: i + 1}));

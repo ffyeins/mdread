@@ -1,6 +1,7 @@
 # --max-diagram-height: beautiful-mermaid's tall diagram gets its width capped at the height
 # times its aspect ratio
 @ source mermaid-tall.md
+@ mermaid beautiful-mermaid
 @ height 200px
 + --mdr-diagram-max-height: 200px;
 =1 max-width: min(100%, calc(var(--mdr-diagram-max-height) * 0.

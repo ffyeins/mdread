@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="2.1.0"
+VERSION="2.2.0"
 prog=mdtohtml
 
 usage() {
@@ -16,8 +16,8 @@ diagrams load from CDNs when the page is viewed.
 Options:
   --light        Render with the GitHub light theme
   --dark         Render with the GitHub dark theme (default)
-  --mermaid NAME Diagram renderer: beautiful-mermaid (default; pele draws the
-                 types it lacks), pele, or mermaid (mermaid.js)
+  --mermaid NAME Diagram renderer: pele (default), beautiful-mermaid (pele
+                 draws the types it lacks), or mermaid (mermaid.js)
   --max-diagram-height H
                  Scale down diagrams taller than H: a size in px or vh such as
                  600px (or 600) or 50vh, or none. Default: 80vh

@@ -24,8 +24,8 @@ Both tools share the rendering pipeline in `mdr_render_html`:
 4. Wraps the body in a template with a per-run CSP nonce, pinned `github-markdown-css` (dark or light file, with SRI) and a small inline stylesheet (layout, copy and diagram buttons, the diagram dialog; theme colors and the diagram height limit via `--mdr-*` custom properties)
 5. Page script (classic, runs during parse): drops images for the other theme, adds heading-anchor icons and alert octicons, adds copy buttons (skipping Mermaid/math blocks), shares `copyButton(className, label, getText)` and `addCodeCopy(pre)` with the diagram module as `window.mdr`, and in preview mode keeps `#links` on the page
 6. Diagrams (only when the body has `<code class="language-mermaid"`): one module script for all three renderers, drawn by the one `--mermaid` picks:
-   - `beautiful-mermaid` (default): routes each diagram by the type named on its first line that isn't blank or a `%%` comment. beautiful-mermaid's six types (`graph`/`flowchart`, `stateDiagram`, `sequenceDiagram`, `classDiagram`, `erDiagram`, `xychart`) go to it; every other type, and any diagram it throws on, goes to Pele. If beautiful-mermaid fails to load, Pele draws its diagrams too
-   - `pele`: every diagram goes to Pele
+   - `pele` (default): every diagram goes to Pele
+   - `beautiful-mermaid`: routes each diagram by the type named on its first line that isn't blank or a `%%` comment. beautiful-mermaid's six types (`graph`/`flowchart`, `stateDiagram`, `sequenceDiagram`, `classDiagram`, `erDiagram`, `xychart`) go to it; every other type, and any diagram it throws on, goes to Pele. If beautiful-mermaid fails to load, Pele draws its diagrams too
    - `mermaid`: mermaid.js, theme `dark` or `default`. It draws one diagram at a time with `mermaid.render(id, text, container)` (`startOnLoad: false`, `suppressErrorRendering: true`) rather than `startOnLoad`/`run()`, so each diagram's failure is known and handled like Pele's. Drawing inside the container lets the page's CSS apply while it measures text
 
    The module captures each block's text and number (its position among the page's Mermaid blocks) before its first `await`, so starry-night's module can't get in the way. Bash prints only the URLs of the libraries the chosen renderer can load, so the page names nothing it won't fetch. beautiful-mermaid is a dynamic `import()` from esm.sh; Pele and mermaid.js are `<script>`s the module adds with their SRI hashes (allowed by `strict-dynamic`). Each loads only when a diagram needs it.
@@ -64,8 +64,8 @@ Keep dependencies to a minimum. comrak is the only runtime dependency beyond mac
   - github-markdown-css: GitHub styling
   - starry-night + hast-util-to-dom: syntax highlighting
   - MathJax: math
-  - beautiful-mermaid: default diagram renderer, picked for its look; only six diagram types
-  - Pele: every other Mermaid type (or all of them with `--mermaid pele`); one file with no dependencies of its own
+  - Pele: default diagram renderer, every Mermaid type (with beautiful-mermaid, the types it lacks); one file with no dependencies of its own
+  - beautiful-mermaid: only with `--mermaid beautiful-mermaid`, picked for its look; only six diagram types
   - mermaid.js: only with `--mermaid mermaid`
 - Tests: Google Chrome (headless) and internet
 
@@ -77,7 +77,7 @@ Keep dependencies to a minimum. comrak is the only runtime dependency beyond mac
 - github-markdown-css 5.9.0 already styles alerts, task lists, footnotes, `kbd`, `pl-*` syntax colors and heading anchors, so the inline CSS doesn't repeat them
 - Math: comrak marks math with `data-math-style`; the page wraps exactly those elements in `\(…\)` / `\[…\]` and typesets them with `MathJax.typesetPromise` (`startup.typeset: false`), so MathJax never scans for `$`. comrak's rule: `$…$` is math only when the text touches both dollar signs and the closing `$` isn't followed by a digit (`$5 and $10` stays text); `\$` is a literal dollar. Also supported: ```` ```math ```` blocks and `` $`…`$ ``
 - Emoji come from comrak's `--gemoji` (standard Unicode shortcodes); GitHub's custom image emoji (`:octocat:`, `:shipit:`) stay as text
-- Options are parsed anywhere (`--light/--dark`, last wins; `--mermaid NAME` or `--mermaid=NAME` with `beautiful-mermaid` (default), `pele` or `mermaid`, where an unknown name is a usage error; `--max-diagram-height H` or `--max-diagram-height=H`, last wins, with `H` one of `N`/`Npx` (a bare number means px), `Nvh` or `none`, `N > 0` and decimals allowed, default `80vh`; anything else, `%` and `0` included, or a missing value is a usage error; `-h`, `-v`, `--`); dash-leading file names are prefixed with `./` before use
+- Options are parsed anywhere (`--light/--dark`, last wins; `--mermaid NAME` or `--mermaid=NAME` with `pele` (default), `beautiful-mermaid` or `mermaid`, where an unknown name is a usage error; `--max-diagram-height H` or `--max-diagram-height=H`, last wins, with `H` one of `N`/`Npx` (a bare number means px), `Nvh` or `none`, `N > 0` and decimals allowed, default `80vh`; anything else, `%` and `0` included, or a missing value is a usage error; `-h`, `-v`, `--`); dash-leading file names are prefixed with `./` before use
 - No environment variables: for a persistent `--max-diagram-height`, use a shell alias; options are parsed anywhere and the last one wins, so passing the flag again overrides it
 - Exit codes: 0 all files converted; 1 any input failed (the others are still processed); 2 usage error
 - Escape HTML with `mdr_escape_html` (sed), not `${var//…}`: bash 5.2 treats `&` in the replacement as the matched text
@@ -90,7 +90,7 @@ Keep dependencies to a minimum. comrak is the only runtime dependency beyond mac
 - Relative links to other `.md` files open the raw markdown (GitHub would render it)
 - Syntax highlighting covers starry-night's `common` bundle plus the on-demand map in `lib/render.sh`; other languages render plain
 - Nested YAML front matter is shown as a YAML code block rather than GitHub's nested tables
-- With the default renderer, one page can mix two diagram styles: beautiful-mermaid's six types look different from the ones Pele draws
+- With `--mermaid beautiful-mermaid`, one page can mix two diagram styles: beautiful-mermaid's six types look different from the ones Pele draws
 - beautiful-mermaid's parser is lenient: some broken diagrams of its types (a flowchart with a stray `][` line) are drawn instead of failing, so they never reach Pele's error note
 - beautiful-mermaid diagrams use the system font rather than its intended Inter, because the CSP blocks Google Fonts. Their SVG downloads do too
 - Diagrams scaled down to the height limit can have small text; expand shows them at full size, with pan and zoom (Pele's zoom also works in place)

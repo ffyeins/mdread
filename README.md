@@ -19,12 +19,12 @@ Keep the `lib/` folder next to the scripts.
 ## Usage
 
 ```bash
-mdread README.md             # preview in the browser
-mdread --light a.md b.md     # light theme, one tab per file
-mdread --mermaid pele a.md   # draw diagrams with Pele (or mermaid for mermaid.js)
+mdread README.md               # preview in the browser
+mdread --light a.md b.md       # light theme, one tab per file
+mdread --mermaid mermaid a.md  # draw diagrams with mermaid.js (or beautiful-mermaid)
 
-mdtohtml README.md           # writes README.html
-mdtohtml --force README.md   # replace a README.html that mdtohtml didn't create
+mdtohtml README.md             # writes README.html
+mdtohtml --force README.md     # replace a README.html that mdtohtml didn't create
 ```
 
 Dark is the default theme. `--help` lists all options.
@@ -35,7 +35,7 @@ Dark is the default theme. `--help` lists all options.
 - Code highlighting with copy buttons
 - Alerts: `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`
 - Math: `$…$`, `$$…$$` and ```` ```math ```` blocks
-- Mermaid diagrams of every type: beautiful-mermaid draws the common ones (flowchart, sequence, class, state, ER, XY chart), Pele the rest
+- Mermaid diagrams of every type, drawn by Pele (`--mermaid` switches to beautiful-mermaid or mermaid.js)
 - Diagrams sit in a rounded box with buttons to copy the source, download as SVG or expand (double-click works too) to a full-window view where dragging pans and scrolling zooms; tall diagrams shrink to fit the window (`--max-diagram-height`)
 - Emoji shortcodes like `:rocket:` → 🚀 (not GitHub's custom ones like `:octocat:`)
 - Heading links, and images that only show in dark or light mode

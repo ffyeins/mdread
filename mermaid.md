@@ -10,6 +10,83 @@ mdread --mermaid mermaid mermaid.md   # mermaid.js
 
 The first sections are the types beautiful-mermaid draws (flowchart, sequence, class, state, ER, XY chart); with the default renderer, Pele draws the rest. Several of those later types are still marked beta in mermaid.js.
 
+## Flowchart: decision tree
+
+```mermaid
+flowchart TD
+    tx(["payment / refund / credit"]) --> cls{"class counted?<br/>sale, capture, refund, credit,<br/>void, reversal, discount"}
+    cls -->|no| out(["left out"])
+    cls -->|yes| inh["refund: own tracking, else payment's;<br/>source_app and tender from its payment<br/>(tender override when set)"]
+    inh --> tender["tender = merchant_tender.label_key<br/>(else label)"]
+    tender --> t{"① tracking ids?"}
+    t -->|"developerAppId or<br/>applicationID resolves"| A["app"]
+    t -->|"present, none resolve"| sdk{"sourceSDK<br/>mapped?"}
+    sdk -->|yes| A
+    sdk -->|no| U
+    t -->|absent| s{"② source_app?"}
+    s -->|resolves| A
+    s -->|"present, unresolved"| U
+    s -->|absent| d{"③ tender app?<br/>label_key, system_tender,<br/>package prefix"}
+    d -->|yes| A
+    d -->|no| U(["Tender / Unknown"])
+    A --> R(["Tender / App"])
+```
+
+## Flowchart: table relationships
+
+```mermaid
+flowchart LR
+    subgraph ORDERS["orders / orders_1 / orders_2 (merchant's shard)"]
+        payment
+        refund
+        credit
+        pr["payment_refund<br/>(payment void)"]
+        auth["authorization<br/>(preauth)"]
+        cv["credit_void"]
+        cr["credit_refund"]
+        pe["payment_extra<br/>application_tracking<br/>card_transaction"]
+        re["refund_extra<br/>application_tracking"]
+        ce["credit_extra<br/>application_tracking"]
+        pa["payment_attribute<br/>source_app"]
+        ca["credit_attribute<br/>source_app"]
+        gtx["gateway_tx<br/>type, state, currency"]
+    end
+
+    subgraph META["meta"]
+        mp["merchant_placement"]
+        merchant["merchant<br/>default_currency"]
+        mt["merchant_tender<br/>label, label_key"]
+        st["system_tender"]
+        da[("developer_app")]
+        ma["merchant_app"]
+        dev["device / device_type"]
+    end
+
+    mp -->|orders_shard_id| ORDERS
+    refund -->|payment_id| payment
+    payment -->|payment_refund_id| pr
+    auth -->|"payment_id, closing_payment_id"| payment
+    cv -->|credit_id| credit
+    cr -->|credit_id| credit
+    pe -->|payment_id| payment
+    re -->|refund_id| refund
+    ce -->|credit_id| credit
+    pa -->|payment_id| payment
+    ca -->|credit_id| credit
+    payment & refund & credit & pr -->|gateway_tx_id| gtx
+
+    payment -->|merchant_tender_id| mt
+    refund -->|override_merchant_tender_id| mt
+    credit -->|merchant_tender_id| mt
+    pe & re & ce -->|"① developerAppId = uuid<br/>applicationID = package_name"| da
+    pa & ca -->|"② value = package_name"| da
+    mt -->|"③ label_key = package_name"| da
+    mt -->|system_tender_id| st -->|"③ developer_app_id"| da
+    ma -->|"app_id (prefer installed)"| da
+    payment & refund & credit -->|device_id| dev
+    payment & refund & credit -->|merchant_id| merchant
+```
+
 ## Flowchart: basics
 
 ```mermaid
