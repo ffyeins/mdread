@@ -1,0 +1,6 @@
+# Pele reports diagrams it can't draw; each keeps its source under a note
+@ mermaid pele
+=2 class="mdr-diagram-error"
+=2 <code class="language-mermaid">
++ pele can't render this diagram: No diagram type detected
+- class="pele-diagram"

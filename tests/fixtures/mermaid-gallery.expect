@@ -1,0 +1,5 @@
+# Every diagram in the mermaid.md gallery renders with mermaid.js
+@ source ../../mermaid.md
+@ mermaid mermaid
+=26 class="mermaid" data-processed="true"
+- Syntax error in text

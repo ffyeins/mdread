@@ -1,16 +1,19 @@
 # shellcheck shell=bash disable=SC2034,SC2154
 # Shared rendering for mdread and mdtohtml. Sourced by both scripts, not run directly.
 # Globals flow both ways, hence the shellcheck exclusions: callers define `prog`, `VERSION`
-# and `usage`; mdr_parse_args sets `theme`, `force`, `files` and `action` for them.
+# and `usage`; mdr_parse_args sets `theme`, `mermaid`, `force`, `files` and `action` for them.
 
 # Pinned CDN assets. After bumping a version, refresh its integrity hash with:
 #   curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A
-# starry-night and hast-util-to-dom are pinned in the module script below (esm.sh, no SRI).
+# starry-night, hast-util-to-dom and beautiful-mermaid are pinned in the module scripts
+# below (esm.sh, no SRI).
 MDR_CSS_BASE="https://cdn.jsdelivr.net/npm/github-markdown-css@5.9.0"
 MDR_CSS_SRI_DARK="sha384-nlth4oyFjBlAziFH2oypWWsE00W7j/6uVR4/Fz1++oPhaqeF8LujWsaX3ChXZw/1"
 MDR_CSS_SRI_LIGHT="sha384-4+yp2IvYOqcJcR9WCGb7S9CwgoCBD4qxmEMxnXjwpM54P0M/z05F3YkC+NFunWrc"
 MDR_MERMAID_URL="https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js"
 MDR_MERMAID_SRI="sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2"
+MDR_PELE_URL="https://cdn.jsdelivr.net/npm/pele@1.13.0/dist/pele.global.js"
+MDR_PELE_SRI="sha384-vDPV1LDXGIwjU5/gMUtHbn/WAmwRmOgkQpiq+Rm4d/BPTsdfpIUpvi2xVET6z85W"
 MDR_MATHJAX_URL="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
 MDR_MATHJAX_SRI="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
 
@@ -20,12 +23,20 @@ mdr_usage_error() {
   exit 2
 }
 
-# Parse the options both commands share. Sets theme, force, files and action (run, help or
-# version). $1 is 1 when --force is allowed (mdtohtml only).
+mdr_set_mermaid() {
+  case $1 in
+    beautiful-mermaid|pele|mermaid) mermaid=$1 ;;
+    *) mdr_usage_error "unknown mermaid renderer: '$1' (beautiful-mermaid, pele or mermaid)" ;;
+  esac
+}
+
+# Parse the options both commands share. Sets theme, mermaid (the diagram renderer), force,
+# files and action (run, help or version). $1 is 1 when --force is allowed (mdtohtml only).
 mdr_parse_args() {
   local allow_force=$1
   shift
   theme=dark
+  mermaid=beautiful-mermaid
   force=0
   action=run
   files=()
@@ -35,6 +46,12 @@ mdr_parse_args() {
       -v|--version) action=version; return ;;
       --light) theme=light ;;
       --dark) theme=dark ;;
+      --mermaid=*) mdr_set_mermaid "${1#*=}" ;;
+      --mermaid)
+        [[ $# -ge 2 ]] || mdr_usage_error "--mermaid needs a renderer name"
+        shift
+        mdr_set_mermaid "$1"
+        ;;
       -f|--force)
         [[ $allow_force == 1 ]] || mdr_usage_error "unknown option: $1"
         force=1
@@ -127,12 +144,12 @@ mdr_frontmatter() {
 }
 
 # Render one markdown file to a complete HTML page on stdout.
-# Usage: mdr_render_html <file> <theme> [base_url]
+# Usage: mdr_render_html <file> <theme> <mermaid renderer> [base_url]
 # base_url (mdread only) becomes <base href>, so relative images and links resolve against
 # the source directory; the page script then keeps #links on the page itself.
 mdr_render_html() {
-  local file=$1 theme=$2 base_url=${3:-}
-  local body frontmatter title nonce csp css_file css_sri theme_vars mermaid_theme
+  local file=$1 theme=$2 renderer=$3 base_url=${4:-}
+  local body frontmatter title nonce csp css_file css_sri theme_vars mermaid_theme pele_vars
 
   body=$(comrak --config-file none --unsafe \
     -e table,strikethrough,autolink,tasklist,footnotes,alerts,math-dollars,math-code \
@@ -148,15 +165,19 @@ mdr_render_html() {
       css_file=github-markdown-light.css
       css_sri=$MDR_CSS_SRI_LIGHT
       mermaid_theme=default
-      theme_vars='--mdr-page-bg: #ffffff; --mdr-btn-bg: #f6f8fa; --mdr-btn-border: #d0d7de; --mdr-btn-fg: #656d76; --mdr-btn-hover-bg: #eaeef2; --mdr-btn-hover-fg: #1f2328; --mdr-ok: #1a7f37;'
+      theme_vars='--mdr-page-bg: #ffffff; --mdr-btn-bg: #f6f8fa; --mdr-btn-border: #d0d7de; --mdr-btn-fg: #656d76; --mdr-btn-hover-bg: #eaeef2; --mdr-btn-hover-fg: #1f2328; --mdr-ok: #1a7f37; --mdr-error: #d1242f;'
+      pele_vars='--pele-bg: #ffffff; --pele-fg: #1f2328; --pele-line: #1f2328; --pele-muted: #59636e; --pele-surface: #f6f8fa; --pele-surface-alt: #eff2f5; --pele-border: #d1d9e0; --pele-accent: #0969da; --pele-error: #d1242f; --pele-critical: #d1242f;'
       ;;
     *)
       css_file=github-markdown-dark.css
       css_sri=$MDR_CSS_SRI_DARK
       mermaid_theme=dark
-      theme_vars='--mdr-page-bg: #0d1117; --mdr-btn-bg: #21262d; --mdr-btn-border: #30363d; --mdr-btn-fg: #8b949e; --mdr-btn-hover-bg: #30363d; --mdr-btn-hover-fg: #e6edf3; --mdr-ok: #3fb950;'
+      theme_vars='--mdr-page-bg: #0d1117; --mdr-btn-bg: #21262d; --mdr-btn-border: #30363d; --mdr-btn-fg: #8b949e; --mdr-btn-hover-bg: #30363d; --mdr-btn-hover-fg: #e6edf3; --mdr-ok: #3fb950; --mdr-error: #f85149;'
+      pele_vars='--pele-bg: #0d1117; --pele-fg: #f0f6fc; --pele-line: #f0f6fc; --pele-muted: #9198a1; --pele-surface: #151b23; --pele-surface-alt: #212830; --pele-border: #3d444d; --pele-accent: #4493f8; --pele-error: #f85149; --pele-critical: #f85149;'
       ;;
   esac
+  # Pele's defaults are light; give its diagrams GitHub's colors for the theme
+  if [[ $renderer != mermaid ]]; then theme_vars+=" $pele_vars"; fi
 
   # Only scripts carrying this run's nonce execute, so script in the markdown's raw HTML
   # (inline handlers, javascript: links) can't. strict-dynamic lets our scripts load their
@@ -192,6 +213,9 @@ body { margin: 0; background: var(--mdr-page-bg); }
 .code-wrapper:hover > .copy-btn, .copy-btn:focus-visible { opacity: 1; }
 .copy-btn:hover { color: var(--mdr-btn-hover-fg); background: var(--mdr-btn-hover-bg); }
 .copy-btn.copied { color: var(--mdr-ok); }
+.beautiful-mermaid, .pele-diagram { margin-bottom: 16px; }
+.beautiful-mermaid > svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.mdr-diagram-error { color: var(--mdr-error); }
 </style>
 </head>
 <body>
@@ -285,7 +309,7 @@ CSS
 JS
   printf '</script>\n'
 
-  if [[ $body == *'<code class="language-mermaid"'* ]]; then
+  if [[ $body == *'<code class="language-mermaid"'* && $renderer == mermaid ]]; then
     printf '<script nonce="%s">\n' "$nonce"
     cat <<'JS'
 document.querySelectorAll(".markdown-body pre > code.language-mermaid").forEach(function (code) {
@@ -300,6 +324,84 @@ JS
       "$nonce" "$MDR_MERMAID_URL" "$MDR_MERMAID_SRI"
     printf '<script nonce="%s">mermaid.initialize({startOnLoad: true, theme: "%s"});</script>\n' \
       "$nonce" "$mermaid_theme"
+  elif [[ $body == *'<code class="language-mermaid"'* ]]; then
+    # A module, for top-level await while the libraries load
+    printf '<script type="module" nonce="%s">\n' "$nonce"
+    printf 'const renderer = "%s", peleUrl = "%s", peleSri = "%s";\n' \
+      "$renderer" "$MDR_PELE_URL" "$MDR_PELE_SRI"
+    cat <<'JS'
+// beautiful-mermaid draws the types it knows (flowchart, state, sequence, class, ER, XY
+// chart); Pele draws the rest, and any diagram beautiful-mermaid throws on. With
+// --mermaid pele, Pele draws everything. Each library loads only if a diagram needs it.
+const jobs = [...document.querySelectorAll(".markdown-body pre > code.language-mermaid")]
+  .map((code) => ({pre: code.parentElement, text: code.textContent}));
+const light = document.documentElement.getAttribute("data-theme") === "light";
+
+// A diagram's type is named on its first line that isn't blank or a %% comment
+const beautifulType =
+  /^(graph|flowchart|statediagram(-v2)?|sequencediagram|classdiagram|erdiagram|xychart(-beta)?)\b/i;
+const header = (text) =>
+  text.split("\n").map((line) => line.trim()).find((line) => line && !line.startsWith("%%")) || "";
+
+// Returns the diagrams it couldn't draw
+const drawBeautiful = async (list) => {
+  const {renderMermaidSVG, THEMES} = await import("https://esm.sh/beautiful-mermaid@1.1.3?bundle");
+  const colors = THEMES[light ? "github-light" : "github-dark"];
+  const failed = [];
+  for (const job of list) {
+    try {
+      // The SVG's stylesheet @imports its font from Google Fonts, which the CSP blocks; drop
+      // it so the text falls back to the system font
+      const svg = renderMermaidSVG(job.text, {...colors, transparent: true})
+        .replace(/@import url\([^)]*\);/g, "");
+      const div = document.createElement("div");
+      div.className = "beautiful-mermaid";
+      div.innerHTML = svg;
+      job.pre.replaceWith(div);
+    } catch {
+      failed.push(job);
+    }
+  }
+  return failed;
+};
+
+const drawPele = async (list) => {
+  await new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = peleUrl;
+    script.integrity = peleSri;
+    script.crossOrigin = "anonymous";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.append(script);
+  });
+  for (const job of list) {
+    const div = document.createElement("div");
+    div.className = "pele-diagram";
+    job.pre.replaceWith(div);
+    // mount() measures text with the page's font, fits the diagram to its container and adds
+    // zoom when it has to shrink it. A diagram it can't draw keeps its source under a note.
+    pele.mount(div, job.text, {
+      onError(err) {
+        const note = document.createElement("p");
+        note.className = "mdr-diagram-error";
+        note.textContent = "pele can't render this diagram: " + (err?.message || err);
+        if (div.isConnected) div.replaceWith(note, job.pre);
+      }
+    });
+  }
+};
+
+let forPele = jobs;
+if (renderer === "beautiful-mermaid") {
+  const mine = jobs.filter((job) => beautifulType.test(header(job.text)));
+  forPele = jobs.filter((job) => !mine.includes(job));
+  // If beautiful-mermaid doesn't load, Pele draws its diagrams too
+  if (mine.length) forPele.push(...(await drawBeautiful(mine).catch(() => mine)));
+}
+if (forPele.length) await drawPele(forPele);
+JS
+    printf '</script>\n'
   fi
 
   if [[ $body == *'data-math-style='* ]]; then

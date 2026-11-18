@@ -10,6 +10,7 @@ Two bash commands for working with markdown files — GitHub-style theme (dark d
 - `tests/run` — regression harness; its header documents the `.expect` format (checks, plus `@` directives such as `@ source` to reuse another fixture's markdown)
 - `tests/fixtures/` — markdown inputs, `.expect` files and `img/`
 - `test.md` — kitchen-sink sample for checking by eye (also rendered by the `kitchen-sink` fixture); its images come from `tests/fixtures/img/`
+- `mermaid.md` — one example of each Mermaid diagram type, for comparing diagram renderers by eye (also rendered by the `mermaid-gallery`, `mermaid-beautiful` and `mermaid-pele` fixtures)
 
 Each script defines `prog`, `VERSION` (mdread 5.x, mdtohtml 2.x) and `usage`, finds `lib/render.sh` via `readlink -f "${BASH_SOURCE[0]}"`, then calls `mdr_parse_args` and `mdr_render_html`.
 
@@ -22,8 +23,17 @@ Both tools share the rendering pipeline in `mdr_render_html`:
 3. Renders YAML front matter (which comrak strips) as a one-row table, or a YAML code block if it isn't flat `key: value` (`mdr_frontmatter`, awk)
 4. Wraps the body in a template with a per-run CSP nonce, pinned `github-markdown-css` (dark or light file, with SRI) and a small inline stylesheet (layout, copy button; theme colors via `--mdr-*` custom properties)
 5. Page script (classic, runs during parse): drops images for the other theme, adds heading-anchor icons and alert octicons, adds copy buttons (skipping Mermaid/math blocks), and in preview mode keeps `#links` on the page
-6. Conditionally adds Mermaid (when the body has `<code class="language-mermaid"`) and MathJax (when it has `data-math-style=`)
-7. starry-night ES module (only when a fenced code block names a language, including the front-matter YAML fallback) highlights code; languages outside its `common` bundle load on demand from a flag→scope map
+6. Diagrams (only when the body has `<code class="language-mermaid"`), drawn by the renderer `--mermaid` picks:
+   - `beautiful-mermaid` (default): a module script routes each diagram by the type named on its first line that isn't blank or a `%%` comment. beautiful-mermaid's six types (`graph`/`flowchart`, `stateDiagram`, `sequenceDiagram`, `classDiagram`, `erDiagram`, `xychart`) go to it; every other type, and any diagram it throws on, goes to Pele. If beautiful-mermaid fails to load, Pele draws its diagrams too
+   - `pele`: the same module script, sending every diagram to Pele
+   - `mermaid`: mermaid.js (classic script, `startOnLoad`, theme `dark` or `default`)
+
+   The module captures each block's text before its first `await`, so starry-night's module can't get in the way. beautiful-mermaid is a dynamic `import()` from esm.sh; Pele is a `<script>` the module adds with its SRI hash (allowed by `strict-dynamic`). Each loads only when a diagram needs it.
+   - beautiful-mermaid output goes in `.beautiful-mermaid`, with its built-in `github-dark`/`github-light` themes. Its SVG `@import`s the Inter font from Google Fonts, which the CSP blocks, so the page strips that line and the system font is used
+   - Pele output goes in `.pele-diagram`, through `pele.mount`, which measures text with the page font, re-lays the diagram out to fit its container and adds zoom controls. Pele's defaults are light, so `--pele-*` variables on `:root` carry GitHub's colors
+   - A diagram Pele can't draw keeps its source `<pre>` under a `.mdr-diagram-error` note
+7. MathJax (only when the body has `data-math-style=`); see Math under Key Details
+8. starry-night ES module (only when a fenced code block names a language, including the front-matter YAML fallback) highlights code; languages outside its `common` bundle load on demand from a flag→scope map
 
 **mdread** additionally:
 - Writes pages to `${TMPDIR:-/tmp}/mdread.XXXXXX.html` (mktemp then rename, since macOS mktemp only replaces trailing Xs)
@@ -42,18 +52,24 @@ Keep dependencies to a minimum. comrak is the only runtime dependency beyond mac
 
 - `comrak` (`brew install comrak`) — CommonMark + GFM parser (cmark-gfm compatible); replaced cmark-gfm because it keeps math intact and builds in alerts, heading IDs, front matter and emoji
 - macOS `open` command
-- Internet connection only for CDN assets (CSS/JS for styling, syntax highlighting, MathJax, Mermaid)
+- Internet connection only for CDN assets, which the page loads when it needs them:
+  - github-markdown-css: GitHub styling
+  - starry-night + hast-util-to-dom: syntax highlighting
+  - MathJax: math
+  - beautiful-mermaid: default diagram renderer, picked for its look; only six diagram types
+  - Pele: every other Mermaid type (or all of them with `--mermaid pele`); one file with no dependencies of its own
+  - mermaid.js: only with `--mermaid mermaid`
 - Tests: Google Chrome (headless) and internet
 
 ## Key Details
 
 - Rendering is done locally — no API calls, no rate limits, no auth tokens
-- CDN versions are pinned in `lib/render.sh`: github-markdown-css 5.9.0, mermaid 11.17.2, mathjax 3.2.2 (all with SRI; the CSS uses the non-minified files because jsDelivr's auto-minified ones can't carry SRI), starry-night 3.11.0 and hast-util-to-dom 4.0.1 from esm.sh (no SRI). Bumping a version means refreshing its hash (command in the file's header)
+- CDN versions are pinned in `lib/render.sh`: github-markdown-css 5.9.0, mermaid 11.17.2, pele 1.13.0, mathjax 3.2.2 (all with SRI; the CSS uses the non-minified files because jsDelivr's auto-minified ones can't carry SRI), starry-night 3.11.0, hast-util-to-dom 4.0.1 and beautiful-mermaid 1.1.3 from esm.sh (no SRI). Bumping a version means refreshing its hash (command in the file's header)
 - CSP: `script-src 'nonce-…' 'strict-dynamic' 'wasm-unsafe-eval'` (starry-night's oniguruma needs WASM). Every script we emit must carry the nonce. `<base>` goes before the CSP meta so `base-uri 'none'` only blocks `<base>` from the markdown
 - github-markdown-css 5.9.0 already styles alerts, task lists, footnotes, `kbd`, `pl-*` syntax colors and heading anchors, so the inline CSS doesn't repeat them
 - Math: comrak marks math with `data-math-style`; the page wraps exactly those elements in `\(…\)` / `\[…\]` and typesets them with `MathJax.typesetPromise` (`startup.typeset: false`), so MathJax never scans for `$`. comrak's rule: `$…$` is math only when the text touches both dollar signs and the closing `$` isn't followed by a digit (`$5 and $10` stays text); `\$` is a literal dollar. Also supported: ```` ```math ```` blocks and `` $`…`$ ``
 - Emoji come from comrak's `--gemoji` (standard Unicode shortcodes); GitHub's custom image emoji (`:octocat:`, `:shipit:`) stay as text
-- Options are parsed anywhere (`--light/--dark`, last wins; `-h`, `-v`, `--`); dash-leading file names are prefixed with `./` before use
+- Options are parsed anywhere (`--light/--dark`, last wins; `--mermaid NAME` or `--mermaid=NAME` with `beautiful-mermaid` (default), `pele` or `mermaid`, where an unknown name is a usage error; `-h`, `-v`, `--`); dash-leading file names are prefixed with `./` before use
 - Exit codes: 0 all files converted; 1 any input failed (the others are still processed); 2 usage error
 - Escape HTML with `mdr_escape_html` (sed), not `${var//…}`: bash 5.2 treats `&` in the replacement as the matched text
 - Keep scripts bash 3.2-safe (macOS `/usr/bin/env bash`): no `${x,,}`, guard empty arrays under `set -u`
@@ -65,6 +81,9 @@ Keep dependencies to a minimum. comrak is the only runtime dependency beyond mac
 - Relative links to other `.md` files open the raw markdown (GitHub would render it)
 - Syntax highlighting covers starry-night's `common` bundle plus the on-demand map in `lib/render.sh`; other languages render plain
 - Nested YAML front matter is shown as a YAML code block rather than GitHub's nested tables
+- With the default renderer, one page can mix two diagram styles: beautiful-mermaid's six types look different from the ones Pele draws
+- beautiful-mermaid's parser is lenient: some broken diagrams of its types (a flowchart with a stray `][` line) are drawn instead of failing, so they never reach Pele's error note
+- beautiful-mermaid diagrams use the system font rather than its intended Inter, because the CSP blocks Google Fonts
 
 ## Documentation
 

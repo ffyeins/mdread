@@ -1,0 +1,8 @@
+# Pele draws every diagram in the mermaid.md gallery, pie included, in GitHub's dark colors
+@ source ../../mermaid.md
+@ mermaid pele
+=26 class="pele-diagram"
++ class="pele pele-pie"
++ --pele-bg: #0d1117
+- class="mdr-diagram-error"
+- data-processed

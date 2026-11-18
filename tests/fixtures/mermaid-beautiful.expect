@@ -1,0 +1,12 @@
+# Default renderer on the mermaid.md gallery: beautiful-mermaid draws the types it supports
+# (flowchart, sequence, class, state, ER, XY chart), Pele draws the other 16; mermaid.js and
+# Google Fonts never load
+@ source ../../mermaid.md
+=10 class="beautiful-mermaid"
+=16 class="pele-diagram"
++ class="pele pele-pie"
++ --bg:#0d1117
+- class="mdr-diagram-error"
+- data-processed
+- fonts.googleapis.com
+=1 <script src="https://cdn.jsdelivr.net/npm/pele

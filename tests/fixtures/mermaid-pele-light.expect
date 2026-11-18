@@ -1,0 +1,7 @@
+# mdread passes --mermaid pele through, and the light theme gets GitHub's light colors
+@ source mermaid.md
+@ mode preview
+@ theme light
+@ mermaid pele
+=1 class="pele-diagram"
++ --pele-bg: #ffffff
