@@ -1,0 +1,11 @@
+# mdread passes --mermaid mermaid through; the light theme draws with mermaid.js's default
+# theme, with the diagram buttons
+@ source mermaid.md
+@ mode preview
+@ theme light
+@ mermaid mermaid
+=1 class="mermaid-diagram"
+=1 class="mdr-diagram"
+=1 aria-label="Expand diagram"
++ mermaidTheme = "default"
+- class="mdr-diagram-error"

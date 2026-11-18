@@ -1,0 +1,10 @@
+# mermaid.js failures are handled like Pele's: the source stays under a note, with the code
+# copy button, and mermaid.js draws no error picture
+@ source mermaid-invalid.md
+@ mermaid mermaid
+=2 class="mdr-diagram-error"
+=2 <code class="language-mermaid">
+=2 class="copy-btn"
++ mermaid.js can't render this diagram:
+- class="mdr-diagram"
+- Syntax error in text

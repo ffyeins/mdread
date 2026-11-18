@@ -1,0 +1,8 @@
+# --max-diagram-height with Pele: the tall diagram shows smaller than its natural size, so
+# Pele offers its zoom controls
+@ source mermaid-tall.md
+@ mermaid pele
+@ height 200
++ --mdr-diagram-max-height: 200px;
+=1 max-width: min(100%, calc(var(--mdr-diagram-max-height) * 0.
++ class="pele pele-zoom"

@@ -8,6 +8,7 @@
 #   @ source other.md   render this file instead of <name>.md (path relative to fixtures/)
 #   @ theme light       render with --light
 #   @ mermaid NAME      render with --mermaid=NAME (default: no flag)
+#   @ height VALUE      render with --max-diagram-height=VALUE (default: no flag)
 #   @ mode preview      render through mdread instead of mdtohtml
 #   @ allow-csp         don't fail on Content-Security-Policy violations
 # {FIXTURES} in an expectation expands to the fixtures directory as a file:// URL.
@@ -47,7 +48,7 @@ dump_dom() { # <html file> <dom out> <log out>
 }
 
 run_fixture() { # <expect file>
-  local expect=$1 name src theme=dark mermaid='' mode=save allow_csp=0 line dir html dom log
+  local expect=$1 name src theme=dark mermaid='' height='' mode=save allow_csp=0 line dir html dom log
   local op text count checks=0 failed=0
   name=$(basename "$expect" .expect)
   src="$fixtures/$name.md"
@@ -57,6 +58,7 @@ run_fixture() { # <expect file>
       '@ source '*) src="$fixtures/${line#@ source }" ;;
       '@ theme '*) theme=${line#@ theme } ;;
       '@ mermaid '*) mermaid=${line#@ mermaid } ;;
+      '@ height '*) height=${line#@ height } ;;
       '@ mode '*) mode=${line#@ mode } ;;
       '@ allow-csp') allow_csp=1 ;;
     esac
@@ -65,11 +67,13 @@ run_fixture() { # <expect file>
   dir="$work/$name"
   mkdir -p "$dir"
   if [[ $mode == preview ]]; then
-    html=$(TMPDIR="$dir" "$root/mdread" "--$theme" ${mermaid:+"--mermaid=$mermaid"} "$src" 2> "$dir/stderr")
+    html=$(TMPDIR="$dir" "$root/mdread" "--$theme" ${mermaid:+"--mermaid=$mermaid"} \
+      ${height:+"--max-diagram-height=$height"} "$src" 2> "$dir/stderr")
   else
     cp "$src" "$dir/"
     cp -R "$fixtures/img" "$dir/"
-    html=$("$root/mdtohtml" "--$theme" ${mermaid:+"--mermaid=$mermaid"} "$dir/$(basename "$src")" 2> "$dir/stderr")
+    html=$("$root/mdtohtml" "--$theme" ${mermaid:+"--mermaid=$mermaid"} \
+      ${height:+"--max-diagram-height=$height"} "$dir/$(basename "$src")" 2> "$dir/stderr")
   fi
   if [[ -z $html || ! -f $html ]]; then
     bad "$name: render failed" "$(head -3 "$dir/stderr")"
@@ -177,6 +181,17 @@ cli 0 "--mermaid=NAME form" "$root/mdtohtml" --mermaid=mermaid "$c/diagram.md" &
   assert "  page doesn't load beautiful-mermaid" test -z "$(grep -l 'beautiful-mermaid@' "$c/diagram.html")"
 cli 0 "mdread --light renders the light theme" env TMPDIR="$c" "$root/mdread" --light "$c/hand.md" &&
   assert "  light stylesheet used" grep -q 'github-markdown-light' "$(head -1 "$work/cli.out")"
+assert "default diagram height is 80vh" grep -q -- '--mdr-diagram-max-height: 80vh;' "$c/diagram.html"
+for bad in tall 50% 0 0px -5; do
+  cli 2 "--max-diagram-height $bad exits 2" "$root/mdtohtml" --max-diagram-height "$bad" "$c/hand.md"
+done
+cli 2 "--max-diagram-height without a size exits 2" "$root/mdtohtml" "$c/hand.md" --max-diagram-height
+cli 0 "a bare --max-diagram-height number means px" "$root/mdtohtml" --max-diagram-height 300 "$c/diagram.md" &&
+  assert "  height is 300px" grep -q -- '--mdr-diagram-max-height: 300px;' "$c/diagram.html"
+cli 0 "--max-diagram-height=none" "$root/mdtohtml" --max-diagram-height=none "$c/diagram.md" &&
+  assert "  no height limit" test -z "$(grep -l -- '--mdr-diagram-max-height:' "$c/diagram.html")"
+cli 0 "the last --max-diagram-height wins" "$root/mdtohtml" --max-diagram-height=300 "$c/diagram.md" --max-diagram-height 62.5vh &&
+  assert "  height is 62.5vh" grep -q -- '--mdr-diagram-max-height: 62.5vh;' "$c/diagram.html"
 
 echo
 echo "$pass passed, $fail failed"

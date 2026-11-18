@@ -1,0 +1,7 @@
+# --max-diagram-height with mermaid.js: the cap keeps mermaid.js's own max-width too
+@ source mermaid-tall.md
+@ mermaid mermaid
+@ height 30vh
++ --mdr-diagram-max-height: 30vh;
+=1 calc(var(--mdr-diagram-max-height) * 0.
++ style="max-width: min(

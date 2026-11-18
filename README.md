@@ -36,6 +36,7 @@ Dark is the default theme. `--help` lists all options.
 - Alerts: `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`
 - Math: `$…$`, `$$…$$` and ```` ```math ```` blocks
 - Mermaid diagrams of every type: beautiful-mermaid draws the common ones (flowchart, sequence, class, state, ER, XY chart), Pele the rest
+- Diagrams sit in a rounded box with buttons to copy the source, download as SVG or expand (double-click works too) to a full-window view where dragging pans and scrolling zooms; tall diagrams shrink to fit the window (`--max-diagram-height`)
 - Emoji shortcodes like `:rocket:` → 🚀 (not GitHub's custom ones like `:octocat:`)
 - Heading links, and images that only show in dark or light mode
 - YAML front matter, shown as a table (nested values as YAML)

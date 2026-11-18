@@ -4,5 +4,7 @@
 @ theme light
 @ mermaid beautiful-mermaid
 =1 class="beautiful-mermaid"
-+ --bg:#ffffff
+=1 class="mdr-diagram"
+=1 aria-label="Expand diagram"
++ --bg: #f6f8fa
 - class="mdr-diagram-error"

@@ -1,5 +1,12 @@
-# Default renderer: beautiful-mermaid
+# Default renderer: beautiful-mermaid, in a wrapper with the diagram buttons, scaled to the
+# default maximum height. The block gets no code copy button.
 + class="beautiful-mermaid"
-- class="mermaid"
+=1 class="mdr-diagram"
+=1 aria-label="Copy diagram source"
+=1 aria-label="Download SVG"
+=1 aria-label="Expand diagram"
++ --mdr-diagram-max-height: 80vh;
++ max-width: min(100%, calc(var(--mdr-diagram-max-height) *
+- class="mermaid-diagram"
 - class="copy-btn"
 - <script src="https://cdn.jsdelivr.net/npm/pele
