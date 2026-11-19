@@ -263,7 +263,24 @@ body { margin: 0; background: var(--mdr-page-bg); }
 .mdr-diagram {
   margin-bottom: 16px; padding: 16px; background: var(--mdr-diagram-bg); border-radius: 6px;
   /* Pele's zoom controls go bottom right, under the diagram buttons, lined up with them */
-  --pele-zoom-top: auto; --pele-zoom-bottom: -8px; --pele-zoom-right: -8px;
+  --pele-zoom-top: auto; --pele-zoom-bottom: 8px; --pele-zoom-right: 8px;
+}
+/* ... in a row rather than Pele's column (inline styles, hence !important): [reset - +]. Pele
+   shows its reset button, after + and -, once zoomed in; reversed, the row grows to the left, so
+   + and - stay under the cursor. A diagram too short for the diagram buttons above the zoom row
+   gets the height they need, with the diagram centered in it: 8px + 28px buttons + 8px + 30px
+   zoom row + 8px, less the 32px of padding. */
+.mdr-diagram .pele-zoom { flex-direction: row-reverse !important; }
+.mdr-diagram > .pele-diagram:has(> .pele-zoom:not([hidden])) {
+  display: grid; align-content: center; min-height: 50px;
+}
+/* Pele's container has the padding instead: zoomed in, Pele draws over its container's padding,
+   so the zoomed diagram reaches the box's edges, clipped to its rounded corners. The clip would
+   hide the focus ring Pele's zoomable SVG gets outside it, so the ring goes inside. */
+.mdr-diagram:has(> .pele-diagram) { padding: 0; overflow: clip; }
+.mdr-diagram > .pele-diagram { padding: 16px; }
+.mdr-diagram > .pele-diagram > svg:focus-visible {
+  outline: 2px solid var(--pele-accent); outline-offset: -2px;
 }
 .beautiful-mermaid > svg, .pele-diagram > svg, .mermaid-diagram > svg {
   display: block; max-width: 100%; height: auto; margin: 0 auto;
@@ -484,6 +501,11 @@ const load = ([src, integrity], list) => new Promise((resolve) => {
 });
 
 const svgOf = (job) => job.el?.querySelector(":scope > svg");
+// The width a container lays its diagram out in: Pele's, on the page, has padding
+const contentWidth = (el) => {
+  const style = getComputedStyle(el);
+  return el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+};
 const viewBox = (svg) => {
   const [, , w, h] = (svg.getAttribute("viewBox") || "").split(/[\s,]+/).map(Number);
   return {w, h};
@@ -732,7 +754,7 @@ const expand = (job, opener) => {
     view.append(div);
     mounted = pele.mount(div, job.text, {
       zoom: false,
-      maxWidth: Math.max(div.clientWidth, job.el.clientWidth),
+      maxWidth: Math.max(div.clientWidth, contentWidth(job.el)),
       onRender(result) {
         div.style.width = "";
         zoom.show(div.querySelector(":scope > svg"), result.width, result.height);
