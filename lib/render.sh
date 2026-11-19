@@ -189,14 +189,14 @@ mdr_render_html() {
       css_file=github-markdown-light.css
       css_sri=$MDR_CSS_SRI_LIGHT
       mermaid_theme=default
-      theme_vars='--mdr-page-bg: #ffffff; --mdr-diagram-bg: #f6f8fa; --mdr-btn-bg: #f6f8fa; --mdr-btn-border: #d0d7de; --mdr-btn-fg: #656d76; --mdr-btn-hover-bg: #eaeef2; --mdr-btn-hover-fg: #1f2328; --mdr-ok: #1a7f37; --mdr-error: #d1242f;'
+      theme_vars='--mdr-page-bg: #ffffff; --mdr-diagram-bg: #f6f8fa; --mdr-btn-bg: #ffffff; --mdr-btn-border: #d1d9e0; --mdr-btn-fg: #818b98; --mdr-btn-text-fg: #59636e; --mdr-btn-hover-bg: #eff2f5; --mdr-btn-hover-fg: #1f2328; --mdr-ok: #1a7f37; --mdr-focus: #0969da; --mdr-error: #d1242f; --mdr-backdrop: #c8d1da66;'
       pele_vars='--pele-bg: #f6f8fa; --pele-fg: #1f2328; --pele-line: #1f2328; --pele-muted: #59636e; --pele-surface: #ffffff; --pele-surface-alt: #eff2f5; --pele-border: #d1d9e0; --pele-accent: #0969da; --pele-error: #d1242f; --pele-critical: #d1242f;'
       ;;
     *)
       css_file=github-markdown-dark.css
       css_sri=$MDR_CSS_SRI_DARK
       mermaid_theme=dark
-      theme_vars='--mdr-page-bg: #0d1117; --mdr-diagram-bg: #151b23; --mdr-btn-bg: #21262d; --mdr-btn-border: #30363d; --mdr-btn-fg: #8b949e; --mdr-btn-hover-bg: #30363d; --mdr-btn-hover-fg: #e6edf3; --mdr-ok: #3fb950; --mdr-error: #f85149;'
+      theme_vars='--mdr-page-bg: #0d1117; --mdr-diagram-bg: #151b23; --mdr-btn-bg: #212830; --mdr-btn-border: #3d444d; --mdr-btn-fg: #9198a1; --mdr-btn-text-fg: #9198a1; --mdr-btn-hover-bg: #262c36; --mdr-btn-hover-fg: #f0f6fc; --mdr-ok: #3fb950; --mdr-focus: #1f6feb; --mdr-error: #f85149; --mdr-backdrop: #21283066;'
       pele_vars='--pele-bg: #151b23; --pele-fg: #f0f6fc; --pele-line: #f0f6fc; --pele-muted: #9198a1; --pele-surface: #212830; --pele-surface-alt: #2a313c; --pele-border: #3d444d; --pele-accent: #4493f8; --pele-error: #f85149; --pele-critical: #f85149;'
       ;;
   esac
@@ -238,6 +238,11 @@ body { margin: 0; background: var(--mdr-page-bg); }
 }
 .copy-btn:hover, .mdr-tool:hover { color: var(--mdr-btn-hover-fg); background: var(--mdr-btn-hover-bg); }
 .copy-btn.copied, .mdr-tool.copied { color: var(--mdr-ok); }
+/* github-markdown-css leaves buttons the browser's focus ring */
+.copy-btn:focus-visible, .mdr-tool:focus-visible, .mdr-zoom > button:focus-visible,
+.mdr-diagram .pele-zoom > button:focus-visible {
+  outline: 2px solid var(--mdr-focus); outline-offset: -2px;
+}
 .code-wrapper, .mdr-diagram { position: relative; }
 .copy-btn, .mdr-diagram-tools {
   position: absolute; top: 8px; right: 8px; z-index: 1; opacity: 0; transition: opacity 0.15s;
@@ -269,8 +274,20 @@ body { margin: 0; background: var(--mdr-page-bg); }
    shows its reset button, after + and -, once zoomed in; reversed, the row grows to the left, so
    + and - stay under the cursor. A diagram too short for the diagram buttons above the zoom row
    gets the height they need, with the diagram centered in it: 8px + 28px buttons + 8px + 30px
-   zoom row + 8px, less the 32px of padding. */
-.mdr-diagram .pele-zoom { flex-direction: row-reverse !important; }
+   zoom row + 8px, less the 32px of padding. They take the diagram buttons' colors: their inline
+   styles read these --pele-* variables, but the buttons' transparent background and inherited
+   color are inline too, hence !important on hover. Pele disables + or - at its zoom limits. Like
+   the diagram buttons, they show on hover or with keyboard focus, the zoomable diagram's too. */
+.mdr-diagram .pele-zoom {
+  flex-direction: row-reverse !important;
+  --pele-bg: var(--mdr-btn-bg); --pele-fg: var(--mdr-btn-fg); --pele-border: var(--mdr-btn-border);
+  --pele-radius: 6px;
+  opacity: 0; transition: opacity 0.15s;
+}
+.mdr-diagram:hover .pele-zoom, .mdr-diagram:has(:focus-visible) .pele-zoom { opacity: 1; }
+.mdr-diagram .pele-zoom > button:hover:not(:disabled) {
+  color: var(--mdr-btn-hover-fg) !important; background: var(--mdr-btn-hover-bg) !important;
+}
 .mdr-diagram > .pele-diagram:has(> .pele-zoom:not([hidden])) {
   display: grid; align-content: center; min-height: 50px;
 }
@@ -280,7 +297,7 @@ body { margin: 0; background: var(--mdr-page-bg); }
 .mdr-diagram:has(> .pele-diagram) { padding: 0; overflow: clip; }
 .mdr-diagram > .pele-diagram { padding: 16px; }
 .mdr-diagram > .pele-diagram > svg:focus-visible {
-  outline: 2px solid var(--pele-accent); outline-offset: -2px;
+  outline: 2px solid var(--mdr-focus); outline-offset: -2px;
 }
 .beautiful-mermaid > svg, .pele-diagram > svg, .mermaid-diagram > svg {
   display: block; max-width: 100%; height: auto; margin: 0 auto;
@@ -294,7 +311,8 @@ body { margin: 0; background: var(--mdr-page-bg); }
 }
 /* github-markdown-css zeroes the last child's bottom margin, which would pin it to the bottom */
 .markdown-body > .mdr-dialog { margin: auto !important; }
-.mdr-dialog::backdrop { background: rgba(1, 4, 9, 0.6); }
+/* ::backdrop inherits custom properties only since 2024 (Chrome 122, Safari 17.4, Firefox 120) */
+.mdr-dialog::backdrop { background: var(--mdr-backdrop, #21283066); }
 .mdr-dialog > .mdr-tool { position: absolute; top: 12px; right: 12px; z-index: 1; }
 /* Dragging scrolls it to pan; the zoom sets the diagram's size */
 .mdr-dialog-view {
@@ -316,8 +334,10 @@ body { margin: 0; background: var(--mdr-page-bg); }
 }
 .mdr-zoom > button:hover { color: var(--mdr-btn-hover-fg); background: var(--mdr-btn-hover-bg); }
 .mdr-zoom > button[aria-disabled="true"] { opacity: 0.4; cursor: default; background: none; }
+/* Text, so it keeps 4.5:1 where the light theme's icon gray is lighter */
 .mdr-zoom > .mdr-zoom-level {
   min-width: 5ch; padding: 4px 2px; font-size: 12px; font-variant-numeric: tabular-nums;
+  color: var(--mdr-btn-text-fg);
 }
 html:has(.mdr-dialog[open]) { overflow: hidden; }
 </style>
