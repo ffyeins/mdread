@@ -1,0 +1,8 @@
+# A code block or table wider than the page fades at the right, the side it can scroll to;
+# one that fits doesn't fade
+=1 class="code-wrapper mdr-more-right"
+=1 class="code-wrapper"
+- class="code-wrapper mdr-more-left
+=1 <table class="mdr-more-right">
+=1 <table>
+- <table class="mdr-more-left

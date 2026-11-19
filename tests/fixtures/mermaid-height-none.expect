@@ -1,0 +1,8 @@
+# --max-diagram-height none: no limit, so Pele draws the tall diagram at full size, without zoom
+@ source mermaid-tall.md
+@ mermaid pele
+@ height none
+- --mdr-diagram-max-height:
+- calc(var(--mdr-diagram-max-height) * 0.
+- class="pele pele-zoom"
+=1 class="mdr-diagram"

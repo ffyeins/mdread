@@ -1,3 +1,14 @@
-+ class="mermaid" data-processed="true"
-+ <svg id="mermaid-
+# Default renderer: Pele, in a wrapper with the diagram buttons, scaled to the default
+# maximum height. The block gets no code copy button, and no other renderer is named.
++ class="pele-diagram"
+=1 class="mdr-diagram"
+=1 aria-label="Copy diagram source"
+=1 aria-label="Download SVG"
+=1 aria-label="Expand diagram"
++ --mdr-diagram-max-height: 80vh;
++ max-width: min(100%, calc(var(--mdr-diagram-max-height) *
+- class="beautiful-mermaid"
+- class="mermaid-diagram"
 - class="copy-btn"
+- beautiful-mermaid@
+- mermaid.min.js

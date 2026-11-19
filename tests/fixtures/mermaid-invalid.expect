@@ -1,0 +1,9 @@
+# Pele reports diagrams it can't draw; each keeps its source under a note, with the code
+# copy button and no diagram buttons
+@ mermaid pele
+=2 class="mdr-diagram-error"
+=2 <code class="language-mermaid">
+=2 class="copy-btn"
++ pele can't render this diagram: No diagram type detected
+- class="pele-diagram"
+- class="mdr-diagram"

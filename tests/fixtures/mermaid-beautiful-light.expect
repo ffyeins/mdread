@@ -1,0 +1,10 @@
+# mdread passes --mermaid through, and the light theme gets GitHub's light diagram colors
+@ source mermaid.md
+@ mode preview
+@ theme light
+@ mermaid beautiful-mermaid
+=1 class="beautiful-mermaid"
+=1 class="mdr-diagram"
+=1 aria-label="Expand diagram"
++ --bg: #f6f8fa
+- class="mdr-diagram-error"

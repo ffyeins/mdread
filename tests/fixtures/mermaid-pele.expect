@@ -1,0 +1,14 @@
+# Pele draws every diagram in the mermaid.md gallery, pie included, in GitHub's dark colors,
+# each with the diagram buttons
+@ source ../../mermaid.md
+@ mermaid pele
+=28 class="pele-diagram"
+=28 class="mdr-diagram"
+=28 aria-label="Copy diagram source"
+=28 aria-label="Download SVG"
+=28 aria-label="Expand diagram"
++ class="pele pele-pie"
++ --pele-bg: #151b23
+- class="mdr-diagram-error"
+- data-processed
+- beautiful-mermaid@

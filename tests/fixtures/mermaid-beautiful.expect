@@ -1,0 +1,18 @@
+# beautiful-mermaid on the mermaid.md gallery: it draws the types it supports (flowchart,
+# sequence, class, state, ER, XY chart), Pele draws the other 16; each gets the diagram
+# buttons; mermaid.js and Google Fonts never load
+@ source ../../mermaid.md
+@ mermaid beautiful-mermaid
+=12 class="beautiful-mermaid"
+=16 class="pele-diagram"
+=28 class="mdr-diagram"
+=28 aria-label="Copy diagram source"
+=28 aria-label="Download SVG"
+=28 aria-label="Expand diagram"
++ class="pele pele-pie"
++ --bg: #151b23
+- class="mdr-diagram-error"
+- data-processed
+- fonts.googleapis.com
+- mermaid.min.js
+=1 <script src="https://cdn.jsdelivr.net/npm/pele
