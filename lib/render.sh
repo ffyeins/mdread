@@ -559,6 +559,21 @@ const place = (job, className) => {
   job.wrap.addEventListener("mousedown", (e) => {
     if (e.detail > 1 && !onControls(e)) e.preventDefault();
   });
+  // Pele disables + or - at its zoom limits and hides its reset button at the fit, and a
+  // focused button it does that to loses the focus to the page, without an event. The zoom
+  // row, shown on keyboard focus, would then fade out under the user, so when that button
+  // had keyboard focus, the row's first button still in use takes it. After a mouse click
+  // the focus goes, as before, so Space still scrolls the page. Capturing, to see the focus
+  // before Pele's own click handler runs. Pele hides reset with display: none, which leaves
+  // it no boxes.
+  const usable = (btn) => !btn.disabled && btn.getClientRects().length > 0;
+  job.wrap.addEventListener("click", (e) => {
+    const btn = e.target.closest?.(".pele-zoom > button");
+    if (!btn?.matches(":focus-visible")) return;
+    setTimeout(() => {
+      if (!usable(btn)) [...btn.parentElement.children].find(usable)?.focus();
+    });
+  }, true);
   job.pre.replaceWith(job.wrap);
   job.el = el;
   return el;
