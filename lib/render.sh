@@ -244,6 +244,21 @@ body { margin: 0; background: var(--mdr-page-bg); }
 }
 .code-wrapper:hover > .copy-btn, .copy-btn:focus-visible,
 .mdr-diagram:hover > .mdr-diagram-tools, .mdr-diagram-tools:has(:focus-visible) { opacity: 1; }
+/* A code block that scrolls sideways fades out at each edge it has more to scroll to. The fade
+   spans the text lines only, so it stays off the corners and the horizontal scrollbar. */
+.code-wrapper::before, .code-wrapper::after {
+  content: ""; position: absolute; top: 1rem; bottom: 1rem; width: 16px;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s;
+}
+.code-wrapper::before { left: 0; background: linear-gradient(to right, var(--mdr-diagram-bg), transparent); }
+.code-wrapper::after { right: 0; background: linear-gradient(to left, var(--mdr-diagram-bg), transparent); }
+.code-wrapper.mdr-more-left::before, .code-wrapper.mdr-more-right::after { opacity: 1; }
+/* Tables have striped rows rather than one background, so a mask fades them into the page */
+.markdown-body table.mdr-more-left { mask-image: linear-gradient(to right, transparent, #000 16px); }
+.markdown-body table.mdr-more-right { mask-image: linear-gradient(to left, transparent, #000 16px); }
+.markdown-body table.mdr-more-left.mdr-more-right {
+  mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+}
 .mdr-diagram-tools { display: flex; gap: 4px; }
 .mdr-diagram {
   margin-bottom: 16px; padding: 16px; background: var(--mdr-diagram-bg); border-radius: 6px;
@@ -360,6 +375,16 @@ CSS
     });
     return btn;
   }
+  // Marks the sides a box that scrolls sideways can still scroll to, for the CSS edge fades
+  function trackEdges(box, marked) {
+    function update() {
+      var left = box.scrollLeft, max = box.scrollWidth - box.clientWidth;
+      marked.classList.toggle("mdr-more-left", left > 1);
+      marked.classList.toggle("mdr-more-right", left < max - 1);
+    }
+    box.addEventListener("scroll", update, {passive: true});
+    new ResizeObserver(update).observe(box);
+  }
   function addCodeCopy(pre) {
     var wrapper = document.createElement("div");
     wrapper.className = "code-wrapper";
@@ -368,12 +393,15 @@ CSS
     wrapper.appendChild(copyButton("copy-btn", "Copy", function () {
       return (pre.querySelector("code") || pre).textContent;
     }));
+    trackEdges(pre, wrapper);
   }
   body.querySelectorAll("pre").forEach(function (pre) {
     // Mermaid and math blocks get replaced by their rendered output; the diagram script adds
     // the button to a diagram it can't draw
     if (!pre.querySelector("code.language-mermaid, [data-math-style]")) addCodeCopy(pre);
   });
+  // github-markdown-css makes each table its own scroll box
+  body.querySelectorAll("table").forEach(function (table) { trackEdges(table, table); });
   window.mdr = {copyButton: copyButton, addCodeCopy: addCodeCopy};
 
   // mdread points <base> at the source directory, which would send #links there too

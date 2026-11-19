@@ -33,6 +33,7 @@ Dark is the default theme. `--help` lists all options.
 
 - Tables, task lists, footnotes, strikethrough and collapsible sections
 - Code highlighting with copy buttons
+- Code blocks and tables too wide for the page fade at the edge while there is more to scroll to
 - Alerts: `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`
 - Math: `$…$`, `$$…$$` and ```` ```math ```` blocks
 - Mermaid diagrams of every type, drawn by Pele (`--mermaid` switches to beautiful-mermaid or mermaid.js)
