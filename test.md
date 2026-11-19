@@ -198,6 +198,16 @@ Should still render in a monospace font with a background.
 |----------|----------|----------|----------|----------|----------|----------|----------|
 | data | data | data | data | data | data | data | data |
 
+### Many columns (horizontal overflow)
+
+Twenty columns, wider than the page. Multi-word cells can wrap; IDs, IPs and timestamps can't, so the table should scroll sideways instead of squeezing them.
+
+| ID | Hostname | Region | Zone | Instance Type | vCPU | Memory | Disk | Operating System | Kernel | Private IP | Public IP | Status | Uptime | CPU % | Mem % | Owner | Team | Created | Tags |
+|----|----------|--------|------|---------------|-----:|-------:|-----:|------------------|--------|------------|-----------|:------:|-------:|------:|------:|-------|------|---------|------|
+| i-0a1b2c3d4e5f60718 | api-gateway-prod-01.internal.example.com | us-east-1 | us-east-1a | m6i.2xlarge | 8 | 32 GiB | 200 GiB | Ubuntu 24.04 LTS (Noble Numbat) | 6.8.0-1015-aws | 10.0.12.34 | 203.0.113.10 | **running** | 42d 7h | 37.5 | 61.2 | alice | Platform Engineering | 2026-10-08T14:22:05Z | `env=prod` `tier=edge` |
+| i-0b2c3d4e5f6071829 | worker-batch-staging-07.internal.example.com | eu-west-2 | eu-west-2c | c7g.4xlarge | 16 | 32 GiB | 500 GiB | Amazon Linux 2023 | 6.1.112-122.189.amzn2023 | 10.1.40.7 | — | *stopped* | 0d 0h | 0.0 | 0.0 | bob | Data Pipelines | 2026-09-30T08:01:47Z | `env=staging` `spot=true` |
+| i-0c3d4e5f607182930 | db-replica-03.internal.example.com | ap-southeast-1 | ap-southeast-1b | r6i.8xlarge | 32 | 256 GiB | 2 TiB | Debian 12 (Bookworm) | 6.1.0-26-cloud-amd64 | 10.2.8.153 | 198.51.100.42 | ~~terminated~~ | — | — | — | carol | Storage and Databases | 2026-07-14T23:59:59Z | `env=prod` `role=replica` `backup=nightly` |
+
 ## Lists
 
 ### Unordered
